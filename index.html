@@ -1,0 +1,761 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="color-scheme" content="light dark">
+<meta name="robots" content="noindex,nofollow">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<style>:root{color-scheme:light;box-sizing:border-box}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]{display:none!important}</style>
+</head>
+<body>
+<title>Suntory Bottle Tally</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow:wght@400;500;600&family=Barlow+Condensed:wght@500;600;700&display=swap">
+<style>
+/* Layout: one screen. A list of dates, then a counter view of two thumb-sized brand slabs. */
+:root{
+  --bg:#EDEBE6; --surface:#FFFFFF; --sunk:#E3E0D9; --fg:#211E1B; --dim:#6A635A; --line:#D6D2C9;
+  --brand:#5B3A8E; --beam:#A3561B; --hayden:#3F5A74; --knob:#8A3528; --warn:#9A6B00; --good:#2C7A4B;
+  --display:"Barlow Condensed","Arial Narrow",sans-serif;
+  --body:"Barlow","Helvetica Neue",Arial,sans-serif;
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --bg:#17140F; --surface:#221E18; --sunk:#1C1813; --fg:#F2EDE4; --dim:#A49B8D; --line:#38312A;
+  --brand:#A98BD6; --beam:#D98A3E; --hayden:#7FA3C4; --knob:#D4705C; --warn:#E0A72A; --good:#4FBE7D;
+  color-scheme:dark;}}
+:root[data-theme="dark"]{
+  --bg:#17140F; --surface:#221E18; --sunk:#1C1813; --fg:#F2EDE4; --dim:#A49B8D; --line:#38312A;
+  --brand:#A98BD6; --beam:#D98A3E; --hayden:#7FA3C4; --knob:#D4705C; --warn:#E0A72A; --good:#4FBE7D;
+  color-scheme:dark;}
+*{box-sizing:border-box}
+html,body{height:100%}
+body{background:var(--bg);color:var(--fg);font-family:var(--body);font-size:16px;line-height:1.4;
+  -webkit-text-size-adjust:100%;overflow-x:hidden}
+.wrap{max-width:560px;margin:0 auto;padding-inline:16px;padding-block:14px 40px}
+h1{font-family:var(--display);font-size:30px;font-weight:700;letter-spacing:.4px;margin:0;text-wrap:balance}
+.sub{color:var(--dim);font-size:14px;margin:2px 0 0}
+.top{display:flex;justify-content:space-between;align-items:flex-end;gap:10px;flex-wrap:wrap;
+  border-bottom:2px solid var(--brand);padding-bottom:9px;margin-bottom:14px}
+.statechip{font-family:var(--display);font-size:12px;font-weight:600;letter-spacing:.7px;text-transform:uppercase;
+  padding:3px 9px;border-radius:999px;background:var(--sunk);color:var(--dim);white-space:nowrap;align-self:center}
+.statechip.live{background:var(--good);color:#fff}
+.statechip.local{background:var(--warn);color:#1a1200}
+.statechip.bad{background:#8A1F1F;color:#fff}
+.remind{background:var(--sunk);border-left:4px solid var(--warn);border-radius:8px;padding:9px 11px;
+  margin:0 0 8px;font-size:13px;color:var(--fg)}
+
+/* ---- event list ---- */
+.mo{font-family:var(--display);font-size:14px;font-weight:700;letter-spacing:1.3px;text-transform:uppercase;
+  color:var(--brand);margin:18px 0 6px;padding-bottom:4px;border-bottom:1px solid var(--line)}
+.mo:first-of-type{margin-top:6px}
+.ev{display:flex;align-items:center;gap:12px;width:100%;text-align:left;background:var(--surface);
+  border:1px solid var(--line);border-radius:10px;padding:11px 13px;margin-bottom:7px;cursor:pointer;
+  font:inherit;color:inherit}
+.ev:focus-visible{outline:3px solid var(--brand);outline-offset:2px}
+.ev .dt{font-family:var(--display);font-size:17px;font-weight:700;line-height:1.05;min-width:62px;
+  font-variant-numeric:tabular-nums}
+.ev .dt span{display:block;font-family:var(--body);font-size:11.5px;font-weight:400;color:var(--dim)}
+.ev .who{flex:1;min-width:0}
+.ev .who b{display:block;font-weight:600;font-size:15px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.ev .who i{font-style:normal;font-size:12.5px;color:var(--dim)}
+.ev .tot{font-family:var(--display);font-size:22px;font-weight:700;font-variant-numeric:tabular-nums;color:var(--dim)}
+.ev .tot.has{color:var(--good)}
+.ev.today{border-color:var(--brand);border-width:2px;box-shadow:0 0 0 3px color-mix(in srgb,var(--brand) 16%,transparent)}
+.todaytag{font-family:var(--display);font-size:11px;font-weight:700;letter-spacing:.8px;text-transform:uppercase;
+  color:#fff;background:var(--brand);border-radius:4px;padding:1px 6px;margin-left:6px;vertical-align:2px}
+
+/* ---- counter ---- */
+.back{font:inherit;font-size:14px;color:var(--brand);background:none;border:0;padding:6px 0;cursor:pointer}
+.evhead{margin-bottom:12px}
+.evhead h2{font-family:var(--display);font-size:24px;font-weight:700;margin:0;letter-spacing:.3px}
+.evhead p{margin:1px 0 0;color:var(--dim);font-size:13.5px}
+.slab{display:block;width:100%;text-align:left;border:0;border-radius:14px;padding:18px 20px;margin-bottom:12px;
+  cursor:pointer;font:inherit;color:#fff;position:relative;min-height:116px;
+  display:flex;align-items:center;justify-content:space-between;gap:14px;
+  -webkit-tap-highlight-color:transparent;transition:transform .06s ease}
+.slab:active{transform:scale(.985)}
+.slab:focus-visible{outline:3px solid var(--fg);outline-offset:3px}
+.slab .nm{font-family:var(--display);font-size:25px;font-weight:700;line-height:1.08;letter-spacing:.3px;min-width:0}
+.slab .nm small{display:block;font-family:var(--body);font-size:12px;font-weight:500;opacity:.82;letter-spacing:.4px;
+  text-transform:uppercase;margin-bottom:3px}
+.slab .nbox{display:flex;flex-direction:column;align-items:stretch;gap:7px;flex:none;width:92px}
+.slab .n{font-family:var(--display);font-size:58px;font-weight:700;line-height:.92;text-align:center;
+  font-variant-numeric:tabular-nums}
+.s-beam{background:var(--beam)} .s-hayden{background:var(--hayden)} .s-knob{background:var(--knob)}
+.minus{height:38px;border-radius:9px;border:0;background:rgba(0,0,0,.26);color:#fff;
+  font-family:var(--display);font-size:16px;font-weight:600;letter-spacing:.6px;line-height:1;cursor:pointer}
+.minus:active{background:rgba(0,0,0,.4)}
+.minus:focus-visible{outline:2px solid #fff;outline-offset:2px}
+
+.sec{font-family:var(--display);font-size:13px;font-weight:700;letter-spacing:1.1px;text-transform:uppercase;
+  color:var(--dim);margin:16px 0 7px}
+.chips{display:grid;grid-template-columns:repeat(auto-fill,minmax(168px,1fr));gap:8px;margin-bottom:4px}
+.chip{display:flex;align-items:center;justify-content:space-between;gap:8px;background:var(--surface);
+  border:1px solid var(--line);border-left:5px solid var(--line);border-radius:10px;padding:10px 10px 10px 12px;
+  font:inherit;color:inherit;cursor:pointer;text-align:left;min-height:62px;-webkit-tap-highlight-color:transparent}
+.chip:active{transform:scale(.985)}
+.chip:focus-visible{outline:3px solid var(--brand);outline-offset:2px}
+.chip .cbox{display:flex;align-items:center;gap:7px;flex:none}
+.cminus{width:34px;height:34px;flex:none;border-radius:8px;border:1px solid var(--line);background:var(--sunk);
+  color:var(--fg);font-family:var(--display);font-size:20px;line-height:1;cursor:pointer}
+.cminus:active{background:var(--line)}
+.cminus:focus-visible{outline:2px solid var(--brand);outline-offset:2px}
+.chip.l-beam{border-left-color:var(--beam)} .chip.l-hayden{border-left-color:var(--hayden)}
+.chip.l-knob{border-left-color:var(--knob)} .chip.l-any{border-left-color:var(--dim)}
+.chip.l-add{border-left-color:var(--brand);border-style:dashed;color:var(--brand)}
+.chip.l-add .cn{font-weight:600}
+.chip .cn{font-size:14px;line-height:1.2;min-width:0}
+.chip .cv{font-family:var(--display);font-size:24px;font-weight:700;font-variant-numeric:tabular-nums;color:var(--dim)}
+.chip .cv.on{color:var(--fg)}
+.chip.on{background:var(--sunk);border-color:var(--dim)}
+.undo{display:block;width:100%;margin:8px 0 12px;background:none;border:1px solid var(--line);border-radius:10px;
+  padding:10px;font:inherit;font-size:14px;color:var(--dim);cursor:pointer}
+.undo:disabled{opacity:.4;cursor:default}
+
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:12px}
+.fld{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:9px 11px}
+.fld label{display:block;font-family:var(--display);font-size:12px;font-weight:600;letter-spacing:.8px;
+  text-transform:uppercase;color:var(--dim);margin-bottom:3px}
+.fld input,.fld textarea{width:100%;border:0;background:none;font:inherit;font-size:15px;color:var(--fg);padding:0}
+.fld input:focus,.fld textarea:focus{outline:none}
+.fld textarea{resize:vertical;min-height:40px}
+.stepper{display:flex;align-items:center;gap:10px}
+.stepper button{width:36px;height:36px;border-radius:8px;border:1px solid var(--line);background:var(--sunk);
+  color:var(--fg);font-size:19px;line-height:1;cursor:pointer;font-family:var(--display);flex:none}
+.stepper .v{font-family:var(--display);font-size:24px;font-weight:700;font-variant-numeric:tabular-nums;min-width:28px;text-align:center}
+.totbar{display:flex;justify-content:space-between;align-items:baseline;background:var(--brand);color:#fff;
+  border-radius:12px;padding:12px 16px;margin-bottom:12px}
+.totbar b{font-family:var(--display);font-size:13px;font-weight:600;letter-spacing:1.1px;text-transform:uppercase}
+.totbar span{font-family:var(--display);font-size:34px;font-weight:700;font-variant-numeric:tabular-nums;line-height:1}
+.note{font-size:12.5px;color:var(--dim);margin:14px 0 0;text-align:center}
+.srow{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+.errbar{background:#8A1F1F;color:#fff;border-radius:9px;padding:10px 12px;margin:0 0 12px;font-size:13px}
+.reset{display:block;width:100%;margin:18px 0 0;background:none;border:1px solid var(--line);border-radius:10px;
+  padding:11px;font:inherit;font-size:13px;color:var(--dim);cursor:pointer}
+.reset.armed{background:#8A1F1F;border-color:#8A1F1F;color:#fff;font-weight:600}
+.slab,.chip,.ev,.undo{user-select:none;-webkit-user-select:none}
+
+/* ---- "which bottle?" window ---- */
+.modal{position:fixed;inset:0;z-index:60;background:rgba(0,0,0,.55);display:flex;
+  align-items:flex-end;justify-content:center;padding:16px;
+  padding-bottom:calc(16px + env(safe-area-inset-bottom,0px))}
+@media (min-width:540px){.modal{align-items:center}}
+.modal .card{background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:18px;
+  width:100%;max-width:440px;box-shadow:0 18px 50px rgba(0,0,0,.35)}
+.modal h3{font-family:var(--display);font-size:23px;font-weight:700;margin:0 0 3px;letter-spacing:.3px}
+.mhint{color:var(--dim);font-size:13px;margin:0 0 12px}
+.modal input{width:100%;border:1px solid var(--line);background:var(--sunk);color:var(--fg);
+  border-radius:10px;padding:13px 12px;font:inherit;font-size:17px}
+.modal input:focus{outline:2px solid var(--brand);outline-offset:1px}
+.mrecent{display:flex;flex-wrap:wrap;gap:7px;margin-top:11px}
+.mrecent .mlab{width:100%;margin:0;font-family:var(--display);font-size:12px;font-weight:600;
+  letter-spacing:.8px;text-transform:uppercase;color:var(--dim)}
+.mrecent button{background:var(--sunk);border:1px solid var(--line);border-radius:999px;padding:8px 13px;
+  font:inherit;font-size:13.5px;color:var(--fg);cursor:pointer}
+.mrecent button:active{transform:scale(.97)}
+.mrow{display:flex;gap:10px;margin-top:15px}
+.mbtn{flex:1;border-radius:10px;padding:13px;font:inherit;font-size:15px;font-weight:600;cursor:pointer;
+  border:1px solid var(--line)}
+.mbtn.ghost{background:none;color:var(--dim)}
+.mbtn.go{background:var(--brand);border-color:var(--brand);color:#fff}
+.mskip{display:block;width:100%;margin-top:11px;background:none;border:0;color:var(--dim);
+  font:inherit;font-size:13px;cursor:pointer;text-decoration:underline}
+@media (max-width:380px){ .slab .n{font-size:52px} .slab .nm{font-size:21px} }
+@media (prefers-reduced-motion:reduce){*{transition:none!important}}
+</style>
+
+<div class="wrap">
+  <div class="top">
+    <div><h1>Bottle Tally</h1><p class="sub">Suntory holiday sampling &middot; 2026</p></div>
+    <span class="statechip" id="chip">Starting</span>
+  </div>
+  <p class="errbar" id="err" hidden></p>
+  <div id="view"></div>
+  <p class="note" id="foot">Tap a date to start counting.</p>
+</div>
+
+<div class="modal" id="modal" hidden>
+  <div class="card" role="dialog" aria-modal="true" aria-labelledby="mtitle">
+    <h3 id="mtitle">Which bottle?</h3>
+    <p class="mhint">Just enough to recognize it later &mdash; brand plus the expression is plenty.</p>
+    <input id="mname" type="text" placeholder="Jim Beam Peach" autocomplete="off"
+           autocapitalize="words" spellcheck="false" enterkeyhint="done">
+    <div class="mrecent" id="mrecent"></div>
+    <div class="mrow">
+      <button type="button" class="mbtn ghost" data-act="mcancel">Cancel</button>
+      <button type="button" class="mbtn go" data-act="madd">Add it</button>
+    </div>
+    <button type="button" class="mskip" data-act="mskip">Don't know the name &mdash; just count one</button>
+  </div>
+</div>
+
+<script>
+const EVENTS = [{"id":"PSD-2026-1017A","date":"2026-10-17","time":"2:00–4:00 PM","venue":"World Wines And Liquor","city":"Mentor","b1":"Jim Beam","b2":"Jim Beam Black 7 Yr"},{"id":"PSD-2026-1017B","date":"2026-10-17","time":"5:00–7:00 PM","venue":"World Wines And Liquor","city":"Mentor","b1":"Basil Hayden","b2":"Knob Creek 9 Yr"},{"id":"PSD-2026-1023A","date":"2026-10-23","time":"6:00–8:00 PM","venue":"Carfagna's Market","city":"Columbus","b1":"Knob Creek 9 Yr","b2":"Knob Creek Rye"},{"id":"PSD-2026-1105A","date":"2026-11-05","time":"6:00–8:00 PM","venue":"Arena Wine & Spirits","city":"Columbus","b1":"Jim Beam","b2":"Jim Beam Black 7 Yr"},{"id":"PSD-2026-1112A","date":"2026-11-12","time":"6:00–8:00 PM","venue":"Kroger","city":"Westerville","b1":"Basil Hayden","b2":"Knob Creek 9 Yr"},{"id":"PSD-2026-1113A","date":"2026-11-13","time":"6:00–8:00 PM","venue":"Giant Eagle Market District","city":"Columbus","b1":"Knob Creek 9 Yr","b2":"Knob Creek Rye"},{"id":"PSD-2026-1114A","date":"2026-11-14","time":"4:00–6:00 PM","venue":"Proof Liquor Company","city":"Strongsville","b1":"Basil Hayden","b2":"Knob Creek 9 Yr"},{"id":"PSD-2026-1119A","date":"2026-11-19","time":"6:00–8:00 PM","venue":"Kroger","city":"Grove City","b1":"Basil Hayden","b2":"Knob Creek 9 Yr"},{"id":"PSD-2026-1121A","date":"2026-11-21","time":"2:00–4:00 PM","venue":"Buehler's","city":"Medina","b1":"Jim Beam","b2":"Jim Beam Black 7 Yr"},{"id":"PSD-2026-1121B","date":"2026-11-21","time":"5:00–7:00 PM","venue":"Buehler's","city":"Medina","b1":"Knob Creek 9 Yr","b2":"Knob Creek Rye"},{"id":"PSD-2026-1122A","date":"2026-11-22","time":"6:00–8:00 PM","venue":"Chateau Wine & Spirits","city":"Dublin","b1":"Jim Beam","b2":"Jim Beam Black 7 Yr"},{"id":"PSD-2026-1123A","date":"2026-11-23","time":"6:00–8:00 PM","venue":"Chateau Wine & Spirits","city":"Dublin","b1":"Knob Creek 9 Yr","b2":"Knob Creek Rye"},{"id":"PSD-2026-1128A","date":"2026-11-28","time":"2:00–4:00 PM","venue":"Kroger","city":"Sunbury","b1":"Jim Beam","b2":"Jim Beam Black 7 Yr"},{"id":"PSD-2026-1128B","date":"2026-11-28","time":"5:00–7:00 PM","venue":"Kroger","city":"Sunbury","b1":"Basil Hayden","b2":"Knob Creek 9 Yr"},{"id":"PSD-2026-1204A","date":"2026-12-04","time":"6:00–8:00 PM","venue":"Giant Eagle Market District","city":"Hilliard","b1":"Basil Hayden","b2":"Knob Creek 9 Yr"},{"id":"PSD-2026-1205A","date":"2026-12-05","time":"1:00–3:00 PM","venue":"Giant Eagle Market District","city":"Strongsville","b1":"Basil Hayden","b2":"Knob Creek 9 Yr"},{"id":"PSD-2026-1205B","date":"2026-12-05","time":"6:00–8:00 PM","venue":"Giant Eagle","city":"Wadsworth","b1":"Knob Creek 9 Yr","b2":"Knob Creek Rye"},{"id":"PSD-2026-1210A","date":"2026-12-10","time":"6:00–8:00 PM","venue":"Northwest Wine and Spirits","city":"Columbus","b1":"Knob Creek 9 Yr","b2":"Knob Creek Rye"},{"id":"PSD-2026-1211A","date":"2026-12-11","time":"6:00–8:00 PM","venue":"Giant Eagle Market District","city":"Columbus","b1":"Jim Beam","b2":"Jim Beam Black 7 Yr"},{"id":"PSD-2026-1212A","date":"2026-12-12","time":"2:00–4:00 PM","venue":"Jungle Jim's International Market","city":"Fairfield","b1":"Jim Beam","b2":"Jim Beam Black 7 Yr"},{"id":"PSD-2026-1212B","date":"2026-12-12","time":"5:00–7:00 PM","venue":"Jungle Jim's International Market","city":"Fairfield","b1":"Basil Hayden","b2":"Knob Creek 9 Yr"},{"id":"PSD-2026-1217A","date":"2026-12-17","time":"6:00–8:00 PM","venue":"Arena Wine & Spirits","city":"Columbus","b1":"Basil Hayden","b2":"Knob Creek 9 Yr"},{"id":"PSD-2026-1218A","date":"2026-12-18","time":"6:00–8:00 PM","venue":"Giant Eagle Market District","city":"Dublin","b1":"Basil Hayden","b2":"Knob Creek 9 Yr"},{"id":"PSD-2026-1219A","date":"2026-12-19","time":"2:00–4:00 PM","venue":"Jungle Jim's / Eastgate","city":"Cincinnati","b1":"Knob Creek 9 Yr","b2":"Knob Creek Rye"},{"id":"PSD-2026-1226A","date":"2026-12-26","time":"5:00–7:00 PM","venue":"Kroger","city":"Delaware","b1":"Knob Creek 9 Yr","b2":"Knob Creek Rye"}];
+
+/* Other bottles each brand sells, from the brand sites. Scheduled bottles are the big
+   slabs; these fill the "also sold tonight" row. Edit the list on the All dates screen. */
+const FAMILY_DEFAULT = {
+  "Jim Beam": ["Jim Beam", "Jim Beam Black 7 Yr", "Jim Beam Devil's Cut", "Jim Beam Double Oak",
+               "Jim Beam Single Barrel", "Jim Beam Rye", "Jim Beam Winter Reserve"],
+  "Knob Creek": ["Knob Creek 9 Yr", "Knob Creek Rye", "Knob Creek 12 Yr Cask Strength",
+                 "Knob Creek 18 Yr", "Knob Creek 7 Yr Rye", "Knob Creek Single Barrel",
+                 "Knob Creek Bourbon x Rye"],
+  "Basil Hayden": ["Basil Hayden", "Basil Hayden Golden Rye", "Basil Hayden Dark Rye",
+                   "Basil Hayden Toast", "Basil Hayden 10 Yr", "Basil Hayden Malted Rye"]
+};
+
+const LS = "psd-tally-v2";
+const $ = (s) => document.querySelector(s);
+const esc = (s) => String(s == null ? "" : s).replace(/[&<>"']/g, c =>
+  ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
+
+let db = null, store = {}, families = null, current = null;
+
+/* If anything ever throws on the phone, say so on screen instead of going quiet. */
+function oops(where, err) {
+  const b = $("#err");
+  b.textContent = "Hiccup in " + where + ": " + ((err && err.message) || err);
+  b.hidden = false;
+}
+window.onerror = (m, s, l) => { try { oops("the page", m + " (line " + l + ")"); } catch (e) {} };
+
+function famOf(bottle) {
+  const n = String(bottle).toLowerCase();
+  if (n.includes("basil hayden")) return "Basil Hayden";
+  if (n.includes("knob creek")) return "Knob Creek";
+  return "Jim Beam";
+}
+/* For typed-in names: only color it when the brand is actually in the name. */
+function famLoose(bottle) {
+  const n = String(bottle).toLowerCase();
+  if (n.includes("basil hayden")) return "Basil Hayden";
+  if (n.includes("knob creek")) return "Knob Creek";
+  if (n.includes("beam")) return "Jim Beam";
+  return null;
+}
+function famClass(f) {
+  return f === "Basil Hayden" ? "hayden" : f === "Knob Creek" ? "knob" : f === "Jim Beam" ? "beam" : "any";
+}
+function lists() { return families || FAMILY_DEFAULT; }
+function extrasFor(e) {
+  const fams = [...new Set([famOf(e.b1), famOf(e.b2)])];
+  const out = [];
+  fams.forEach(f => (lists()[f] || []).forEach(b => {
+    if (b !== e.b1 && b !== e.b2 && !out.some(x => x.name === b)) out.push({ name: b, fam: f });
+  }));
+  return out;
+}
+function blank() { return { c1: 0, c2: 0, extras: {}, custom: [], hist: [], spoiled: 0, notes: "" }; }
+function rec(id) {
+  const r = store[id] || (store[id] = blank());
+  if (!r.extras || typeof r.extras !== "object") r.extras = {};
+  if (!Array.isArray(r.custom)) r.custom = [];
+  if (!Array.isArray(r.hist)) r.hist = [];   /* undo trail, kept on this phone only */
+  ["c1", "c2", "spoiled"].forEach(k => { if (typeof r[k] !== "number") r[k] = 0; });
+  if (typeof r.notes !== "string") r.notes = "";
+  return r;
+}
+function extrasTotal(r) { return Object.values(r.extras || {}).reduce((a, b) => a + (b || 0), 0); }
+function evTotal(id) { const r = store[id]; return r ? (r.c1 || 0) + (r.c2 || 0) + extrasTotal(r) : 0; }
+/* Every typed-in name from any night, newest first — so the second time it is one tap. */
+function recentCustom(exclude) {
+  const out = [];
+  EVENTS.slice().reverse().forEach(e => {
+    const r = store[e.id];
+    if (!r || !Array.isArray(r.custom)) return;
+    r.custom.slice().reverse().forEach(n => {
+      if (!exclude.includes(n) && !out.includes(n)) out.push(n);
+    });
+  });
+  return out.slice(0, 8);
+}
+function fdate(iso) {
+  const [y, m, d] = iso.split("-").map(Number);
+  return new Date(y, m - 1, d).toLocaleDateString("en-US", { weekday: "short", month: "short", day: "numeric" });
+}
+function todayISO() {
+  const n = new Date();
+  return `${n.getFullYear()}-${String(n.getMonth() + 1).padStart(2, "0")}-${String(n.getDate()).padStart(2, "0")}`;
+}
+
+/* ---------- saving ---------- */
+let storageOK = null;
+function checkStorage() {
+  try {
+    localStorage.setItem(LS + "-probe", "1");
+    const got = localStorage.getItem(LS + "-probe");
+    localStorage.removeItem(LS + "-probe");
+    storageOK = got === "1";
+  } catch (e) { storageOK = false; }
+  if (!storageOK) {
+    const b = $("#err");
+    b.innerHTML = "<b>This phone is not saving between sessions.</b> Counting works, but if you " +
+      "close this page the numbers are gone. Copy them out before you leave the event.";
+    b.hidden = false;
+  }
+  return storageOK;
+}
+function cacheLocal() {
+  try { localStorage.setItem(LS, JSON.stringify({ store, families })); } catch (e) { storageOK = false; }
+}
+function loadLocal() {
+  try {
+    const r = localStorage.getItem(LS);
+    if (r) { const p = JSON.parse(r) || {}; store = p.store || {}; families = p.families || null; }
+  } catch (e) {}
+}
+const pending = new Set();
+let timer = null, writing = false, famDirty = false, lastErr = "";
+function queueSave(id) {
+  if (id && store[id]) store[id].updatedAt = new Date().toISOString();
+  cacheLocal();
+  if (id) pending.add(id);
+  clearTimeout(timer);
+  timer = setTimeout(flush, 600);
+}
+async function flush() {
+  if (writing || !db) return;
+  writing = true;
+  const ids = [...pending]; pending.clear();
+  for (const id of ids) {
+    const e = EVENTS.find(x => x.id === id), r = rec(id);
+    try {
+      await db.doc("events/" + id).set({
+        invoice: id, date: e.date, venue: e.venue, city: e.city, agency: e.agency,
+        b1: e.b1, b2: e.b2, c1: r.c1, c2: r.c2, extras: r.extras, custom: r.custom,
+        spoiled: r.spoiled, notes: r.notes,
+        total: r.c1 + r.c2 + extrasTotal(r), updatedAt: new Date().toISOString()
+      });
+    } catch (err) {
+      pending.add(id); failCount++; lastErr = (err && err.message) || String(err);
+    }
+  }
+  if (ids.length) {
+    if (pending.size) setChip("fail", lastErr);
+    else { failCount = 0; lastSaved = hhmm(); setChip("live"); }
+  }
+  if (famDirty) {
+    famDirty = false;
+    try { await db.doc("config/bottles").set({ families: lists(), updatedAt: new Date().toISOString() }); }
+    catch (err) { famDirty = true; }
+  }
+  writing = false;
+  if (pending.size || famDirty) { clearTimeout(timer); timer = setTimeout(flush, 1500); }
+}
+let lastSaved = null, failCount = 0;
+function setChip(state, extra) {
+  const c = $("#chip");
+  if (state === "live") {
+    c.textContent = lastSaved ? "Cloud \u2713 " + lastSaved : "Cloud ready";
+    c.className = "statechip live";
+  } else if (state === "fail") {
+    c.textContent = "Cloud save failing";
+    c.className = "statechip bad";
+    c.title = extra || "";
+  } else if (storageOK === false) {
+    c.textContent = "This session only";
+    c.className = "statechip bad";
+    c.title = "Nothing is being kept. Copy your numbers before closing the page.";
+  } else {
+    c.textContent = "Saved on this phone";
+    c.className = "statechip local";
+    c.title = "Counting works normally. Copy your numbers out after each event.";
+  }
+}
+function hhmm() {
+  const d = new Date();
+  return d.toLocaleTimeString("en-US", { hour: "numeric", minute: "2-digit" });
+}
+
+/* ---------- "which bottle?" window ---------- */
+let modalPick = null;
+function openModal(onPick, exclude) {
+  modalPick = onPick;
+  const rc = recentCustom(exclude || []);
+  $("#mrecent").innerHTML = rc.length
+    ? `<p class="mlab">Typed before &mdash; tap to reuse</p>` +
+      rc.map(n => `<button type="button" data-act="reuse" data-b="${esc(n)}">${esc(n)}</button>`).join("")
+    : "";
+  $("#mname").value = "";
+  $("#modal").hidden = false;
+  setTimeout(() => { try { $("#mname").focus(); } catch (e) {} }, 60);
+}
+function closeModal() { $("#modal").hidden = true; modalPick = null; }
+function take(name) {
+  const n = String(name || "").trim().replace(/\s+/g, " ");
+  if (!n) { try { $("#mname").focus(); } catch (e) {} return; }
+  const fn = modalPick; closeModal();
+  if (fn) fn(n);
+}
+
+/* ---------- one click handler for the whole app ----------
+   Everything is a data-act attribute, so nothing depends on wiring up
+   individual buttons after a redraw. */
+function onTap(ev) {
+  const t = ev.target.closest("[data-act]");
+  if (!t) return;
+  const act = t.dataset.act, b = t.dataset.b;
+  try {
+    if (act === "open") { renderEvent(t.dataset.id); return; }
+    if (act === "lists") { renderLists(); return; }
+    if (act === "export") { renderExport(); return; }
+    if (act === "copy") { doCopy(t); return; }
+    if (act === "savelists") { saveLists(); return; }
+    if (act === "home") { renderList(); return; }
+    if (act === "mcancel") { closeModal(); return; }
+    if (act === "madd") { take($("#mname").value); return; }
+    if (act === "mskip") { const fn = modalPick; closeModal(); if (fn) fn("Other"); return; }
+    if (act === "reuse") { take(b); return; }
+    if (!current) return;
+    const id = current, e = EVENTS.find(x => x.id === id), r = rec(id);
+    if (act === "c1") bump(r, "c1", 1, e.b1);
+    else if (act === "c2") bump(r, "c2", 1, e.b2);
+    else if (act === "c1-") bump(r, "c1", -1);
+    else if (act === "c2-") bump(r, "c2", -1);
+    else if (act === "sp+") bump(r, "spoiled", 1, "spoiled");
+    else if (act === "sp-") bump(r, "spoiled", -1);
+    else if (act === "x") addExtra(r, b, false);
+    else if (act === "x-") subExtra(r, b);
+    else if (act === "undo") undo(r);
+    else if (act === "reset") { armReset(t); return; }
+    else if (act === "reset2") {
+      store[id] = blank();
+      queueSave(id); renderEvent(id); return;
+    }
+    else if (act === "other") {
+      const onScreen = extrasFor(e).map(x => x.name).concat(r.custom, [e.b1, e.b2]);
+      openModal(name => {
+        try {
+          if (name !== "Other" && !r.custom.includes(name)) {
+            r.custom.push(name);
+            addExtra(r, name, true);
+          } else addExtra(r, name, false);
+        } catch (err) { oops("adding that bottle", err); }
+      }, onScreen);
+      return;
+    } else return;
+    queueSave(id); paint();
+  } catch (err) { oops("that button", err); }
+}
+function push(r, a) { r.hist.push(a); if (r.hist.length > 80) r.hist.shift(); }
+function bump(r, k, d, label) {
+  r[k] = Math.max(0, (r[k] || 0) + d);
+  if (d > 0) push(r, { t: "key", k, label });
+}
+function addExtra(r, name, created) {
+  r.extras[name] = (r.extras[name] || 0) + 1;
+  push(r, { t: "extra", k: name, label: name, created: !!created });
+  if (created) { queueSave(current); redrawChips(); }
+}
+function subExtra(r, name) {
+  const v = (r.extras[name] || 0) - 1;
+  if (v <= 0) delete r.extras[name]; else r.extras[name] = v;
+}
+function undo(r) {
+  const a = r.hist.pop();
+  if (!a) return;
+  if (a.t === "key") r[a.k] = Math.max(0, (r[a.k] || 0) - 1);
+  else {
+    subExtra(r, a.k);
+    if (a.created) { r.custom = r.custom.filter(n => n !== a.k); queueSave(current); redrawChips(); }
+  }
+}
+
+/* ---------- all dates ---------- */
+function renderList() {
+  current = null;
+  const today = todayISO(), byMonth = {};
+  EVENTS.forEach(e => { const k = e.date.slice(0, 7); (byMonth[k] = byMonth[k] || []).push(e); });
+  let h = "";
+  Object.keys(byMonth).sort().forEach(k => {
+    const [y, m] = k.split("-").map(Number);
+    h += `<div class="mo">${new Date(y, m - 1, 1).toLocaleDateString("en-US", { month: "long", year: "numeric" })}</div>`;
+    byMonth[k].forEach(e => {
+      const t = evTotal(e.id), isToday = e.date === today;
+      h += `<button type="button" class="ev${isToday ? " today" : ""}" data-act="open" data-id="${e.id}">
+        <span class="dt">${fdate(e.date).split(", ")[0]}<span>${fdate(e.date).split(", ")[1]}</span></span>
+        <span class="who"><b>${esc(e.venue)}${isToday ? '<span class="todaytag">Today</span>' : ""}</b>
+          <i>${esc(e.city)} &middot; ${esc(e.time)}</i></span>
+        <span class="tot${t ? " has" : ""}">${t || "&ndash;"}</span></button>`;
+    });
+  });
+  const counted = EVENTS.filter(e => evTotal(e.id) > 0).length;
+  h += `<div class="sec">Numbers</div>
+    ${counted ? `<p class="remind">${counted} event${counted > 1 ? "s" : ""} counted and sitting on this phone.
+      Copy them out so they are somewhere else too.</p>` : ""}
+    <button type="button" class="undo" data-act="export"
+      style="color:#fff;background:var(--brand);border-color:var(--brand)">Show my numbers to copy</button>
+    <div class="sec">Bottle lists</div>
+    <button type="button" class="undo" data-act="lists" style="color:var(--brand);border-color:var(--brand)">
+      Edit which bottles show up on the counting screen</button>`;
+  $("#view").innerHTML = h;
+  $("#foot").textContent = "Tap a date to start counting. Every tap saves on its own.";
+}
+
+/* ---------- counting ---------- */
+function chipsHTML(e, r) {
+  const base = extrasFor(e);
+  const extra = r.custom.filter(n => n !== "Other" && !base.some(x => x.name === n))
+                        .map(n => ({ name: n, fam: famLoose(n) }));
+  const one = (name, fam, act, cls) =>
+    `<div class="chip ${cls || "l-" + famClass(fam)}" data-act="${act}" data-b="${esc(name)}" role="button" tabindex="0">
+       <span class="cn">${esc(name)}</span>
+       <span class="cbox"><span class="cv" data-cv="${esc(name)}">0</span>
+       <button type="button" class="cminus" data-act="x-" data-b="${esc(name)}"
+               aria-label="One fewer ${esc(name)}">&minus;</button></span></div>`;
+  return base.concat(extra).map(x => one(x.name, x.fam, "x")).join("") +
+    `<div class="chip l-add" data-act="other" role="button" tabindex="0">
+       <span class="cn">Something else&hellip;</span>
+       <span class="cbox"><span class="cv" data-cv="Other">0</span>
+       <button type="button" class="cminus" data-act="x-" data-b="Other"
+               aria-label="One fewer other">&minus;</button></span></div>`;
+}
+function redrawChips() {
+  const e = EVENTS.find(x => x.id === current);
+  if (!e || !$("#chips")) return;
+  $("#chips").innerHTML = chipsHTML(e, rec(current));
+  paint();
+}
+function paint() {
+  if (!current || !$("#grand")) return;
+  const r = rec(current);
+  $("#n1").textContent = r.c1;
+  $("#n2").textContent = r.c2;
+  $("#spv").textContent = r.spoiled;
+  $("#grand").textContent = r.c1 + r.c2 + extrasTotal(r);
+  $("#chips").querySelectorAll(".chip").forEach(c => {
+    const cv = c.querySelector(".cv"), key = cv.dataset.cv, v = r.extras[key] || 0;
+    cv.textContent = v;
+    c.classList.toggle("on", v > 0);
+    c.querySelector(".cminus").hidden = v <= 0;
+  });
+  const u = $("#undo"), last = r.hist[r.hist.length - 1];
+  u.disabled = !last;
+  u.textContent = last ? "Undo — " + last.label : "Nothing to undo yet";
+}
+function renderEvent(id) {
+  current = id;
+  const e = EVENTS.find(x => x.id === id), r = rec(id);
+  $("#view").innerHTML = `
+    <button type="button" class="back" data-act="home">&larr; All dates</button>
+    <div class="evhead">
+      <h2>${esc(e.venue)}</h2>
+      <p>${fdate(e.date)} &middot; ${esc(e.time)} &middot; ${esc(e.city)}</p>
+
+    </div>
+    <div class="totbar"><b>Bottles tonight</b><span id="grand">0</span></div>
+    <div class="slab s-${famClass(famOf(e.b1))}" data-act="c1" role="button" tabindex="0">
+      <span class="nm"><small>Tap to add</small>${esc(e.b1)}</span>
+      <span class="nbox"><span class="n" id="n1">0</span>
+      <button type="button" class="minus" data-act="c1-" aria-label="One fewer ${esc(e.b1)}">&minus; 1</button></span>
+    </div>
+    <div class="slab s-${famClass(famOf(e.b2))}" data-act="c2" role="button" tabindex="0">
+      <span class="nm"><small>Tap to add</small>${esc(e.b2)}</span>
+      <span class="nbox"><span class="n" id="n2">0</span>
+      <button type="button" class="minus" data-act="c2-" aria-label="One fewer ${esc(e.b2)}">&minus; 1</button></span>
+    </div>
+    <button type="button" class="undo" id="undo" data-act="undo" disabled>Nothing to undo yet</button>
+    <div class="sec">Also sold tonight &mdash; same brands</div>
+    <div class="chips" id="chips">${chipsHTML(e, r)}</div>
+    <div class="fld"><label>Spoiled / redone</label>
+      <div class="stepper"><button type="button" data-act="sp-" aria-label="One fewer spoiled">&minus;</button>
+        <span class="v" id="spv">0</span>
+        <button type="button" data-act="sp+" aria-label="One more spoiled">+</button></div></div>
+    <div class="fld"><label for="notes">Notes</label>
+      <textarea id="notes" placeholder="Anything worth remembering about tonight"></textarea></div>
+    <p class="note">Tap a bottle to add one. The small &minus; takes one back off.</p>
+    <button type="button" class="reset" data-act="reset">Clear this whole event</button>`;
+  $("#notes").value = r.notes;
+  $("#notes").oninput = ev => { r.notes = ev.target.value; queueSave(id); };
+  $("#foot").textContent = "";
+  paint();
+}
+
+let resetTimer = null;
+function armReset(btn) {
+  clearTimeout(resetTimer);
+  if (btn.dataset.act === "reset") {
+    btn.dataset.act = "reset2";
+    btn.textContent = "Tap again to clear \u2014 this cannot be undone";
+    btn.classList.add("armed");
+    resetTimer = setTimeout(() => {
+      btn.dataset.act = "reset";
+      btn.textContent = "Clear this whole event";
+      btn.classList.remove("armed");
+    }, 5000);
+  }
+}
+
+/* ---------- plain-text copy-out (no cloud needed) ---------- */
+function reportText() {
+  const months = {}, L = [];
+  EVENTS.forEach(e => {
+    const r = store[e.id];
+    if (!r || evTotal(e.id) === 0) return;
+    (months[e.date.slice(0, 7)] = months[e.date.slice(0, 7)] || []).push([e, r]);
+  });
+  L.push("PURPLE SHARK DESIGNS \u2014 BOTTLE TALLY");
+  L.push("Suntory holiday sampling \u2014 as of " + fdate(todayISO()));
+  const keys = Object.keys(months).sort();
+  if (!keys.length) { L.push(""); L.push("Nothing counted yet."); return L.join("\n"); }
+  keys.forEach(k => {
+    const [y, m] = k.split("-").map(Number);
+    const rows = months[k];
+    const tot = rows.reduce((a, [e]) => a + evTotal(e.id), 0);
+    const bybottle = {};
+    rows.forEach(([e, r]) => {
+      bybottle[e.b1] = (bybottle[e.b1] || 0) + r.c1;
+      bybottle[e.b2] = (bybottle[e.b2] || 0) + r.c2;
+      Object.keys(r.extras).forEach(n => { bybottle[n] = (bybottle[n] || 0) + r.extras[n]; });
+    });
+    L.push("");
+    L.push("=== " + new Date(y, m - 1, 1).toLocaleDateString("en-US",
+      { month: "long", year: "numeric" }).toUpperCase() + " \u2014 " + tot + " bottles, " +
+      rows.length + " event" + (rows.length > 1 ? "s" : "") + " ===");
+    L.push("");
+    L.push("By bottle:");
+    Object.keys(bybottle).filter(n => bybottle[n] > 0)
+      .sort((a, b) => bybottle[b] - bybottle[a])
+      .forEach(n => L.push("  " + bybottle[n] + "  " + n));
+    L.push("");
+    L.push("By event:");
+    rows.forEach(([e, r]) => {
+      L.push("  " + fdate(e.date) + " \u2014 " + e.venue + ", " + e.city +
+             " (" + e.id + ") \u2014 " + evTotal(e.id));
+      if (r.c1) L.push("      " + r.c1 + "  " + e.b1);
+      if (r.c2) L.push("      " + r.c2 + "  " + e.b2);
+      Object.keys(r.extras).forEach(n => { if (r.extras[n]) L.push("      " + r.extras[n] + "  " + n); });
+      if (r.spoiled) L.push("      (" + r.spoiled + " spoiled/redone)");
+      if (r.notes) L.push("      note: " + r.notes);
+    });
+  });
+  return L.join("\n");
+}
+function renderExport() {
+  current = null;
+  const txt = reportText();
+  $("#view").innerHTML = `
+    <button type="button" class="back" data-act="home">&larr; All dates</button>
+    <div class="evhead"><h2>My numbers</h2>
+      <p>Copy this and paste it to Cid, or anywhere else. Works with or without a signal.</p></div>
+    <button type="button" class="undo" data-act="copy"
+      style="color:#fff;background:var(--brand);border-color:var(--brand)">Copy all of it</button>
+    <textarea id="exp" readonly rows="20"
+      style="width:100%;font-family:ui-monospace,Menlo,Consolas,monospace;font-size:12px;
+             background:var(--surface);color:var(--fg);border:1px solid var(--line);
+             border-radius:10px;padding:10px;min-height:300px">${esc(txt)}</textarea>
+    <p class="note">If the copy button misbehaves, tap in the box, select all, and copy.</p>`;
+  $("#foot").textContent = "";
+}
+function doCopy(btn) {
+  const t = $("#exp");
+  const done = ok => { btn.textContent = ok ? "Copied \u2713" : "Select it by hand \u2014 copy didn't work";
+                       setTimeout(() => { btn.textContent = "Copy all of it"; }, 2500); };
+  try {
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      navigator.clipboard.writeText(t.value).then(() => done(true), () => { t.select(); done(false); });
+      return;
+    }
+  } catch (e) {}
+  try { t.select(); t.setSelectionRange(0, 999999); done(!!document.execCommand("copy")); }
+  catch (e) { done(false); }
+}
+
+/* ---------- bottle list editor (for the kitchen table, not the store) ---------- */
+function renderLists() {
+  current = null;
+  const f = lists();
+  $("#view").innerHTML = `
+    <button type="button" class="back" data-act="home">&larr; All dates</button>
+    <div class="evhead"><h2>Bottle lists</h2>
+      <p>These are the buttons under "Also sold tonight". One bottle per line.</p></div>
+    ${Object.keys(f).map(k => `<div class="fld" style="margin-bottom:10px">
+      <label for="f-${esc(k)}">${esc(k)}</label>
+      <textarea id="f-${esc(k)}" rows="7" style="min-height:120px">${esc(f[k].join("\n"))}</textarea>
+    </div>`).join("")}
+    <button type="button" class="undo" data-act="savelists"
+      style="color:#fff;background:var(--brand);border-color:var(--brand)">Save lists</button>
+    <p class="note">Edit these at home. Nothing here needs touching at an event.</p>`;
+  $("#foot").textContent = "";
+}
+function saveLists() {
+  const next = {};
+  Object.keys(lists()).forEach(k => {
+    const t = document.getElementById("f-" + k);
+    next[k] = (t ? t.value : "").split("\n").map(s => s.trim()).filter(Boolean);
+  });
+  families = next; famDirty = true; queueSave(null);
+  renderList();
+}
+
+/* ---------- boot ---------- */
+document.addEventListener("click", onTap);
+document.addEventListener("keydown", ev => {
+  if (ev.key === "Escape" && !$("#modal").hidden) { closeModal(); return; }
+  const t = ev.target;
+  if ((ev.key === "Enter" || ev.key === " ") && t && t.dataset && t.dataset.act
+      && t.getAttribute("role") === "button") { ev.preventDefault(); onTap(ev); }
+  if (ev.key === "Enter" && t && t.id === "mname") { ev.preventDefault(); take(t.value); }
+});
+$("#modal").addEventListener("click", ev => { if (ev.target.id === "modal") closeModal(); });
+
+loadLocal();
+checkStorage();
+setChip("local");
+renderList();
+
+(async () => {
+  try { db = window.claude && window.claude.use ? await window.claude.use("db") : null; }
+  catch (e) { db = null; }
+  if (!db) return;
+  setChip("live");
+  try {
+    const cfg = await db.doc("config/bottles").get();
+    const cv = cfg && (typeof cfg.data === "function" ? cfg.data() : cfg.data || cfg);
+    if (cv && cv.families) families = cv.families;
+  } catch (e) {}
+  try {
+    const snap = await db.collection("events").get();
+    const docs = (snap && (snap.docs || snap)) || [];
+    const seen = new Set();
+    docs.forEach(d => {
+      const v = d && d.data ? (typeof d.data === "function" ? d.data() : d.data) : d;
+      if (!v || !v.invoice) return;
+      const local = store[v.invoice];
+      const remote = { c1: v.c1 || 0, c2: v.c2 || 0, extras: v.extras || {},
+                       custom: Array.isArray(v.custom) ? v.custom : [], hist: [],
+                       spoiled: v.spoiled || 0, notes: v.notes || "",
+                       updatedAt: v.updatedAt || "" };
+      seen.add(v.invoice);
+      /* Whichever copy was touched last wins. Clearing a count on purpose must
+         stick — an older cloud copy with bigger numbers can't resurrect it. */
+      const lstamp = (local && local.updatedAt) || "";
+      if (!local || (remote.updatedAt || "") >= lstamp) {
+        if (local && Array.isArray(local.hist)) remote.hist = local.hist;
+        store[v.invoice] = remote;
+      } else {
+        pending.add(v.invoice);   /* phone is ahead of the cloud — push it up */
+      }
+    });
+    /* A night counted with no signal lives only on the phone. Send it now. */
+    /* Only push a night this phone actually counted (it carries a timestamp).
+       An old untimestamped copy must never resurrect a record cleared elsewhere. */
+    EVENTS.forEach(e => {
+      const r = store[e.id];
+      if (!seen.has(e.id) && r && r.updatedAt && evTotal(e.id) > 0) pending.add(e.id);
+    });
+    if (pending.size) queueSave(null);
+    cacheLocal();
+    if (current) renderEvent(current); else renderList();
+  } catch (e) {}
+})();
+
+(async () => { try { if (navigator.storage && navigator.storage.persist) await navigator.storage.persist(); } catch (e) {} })();
+
+(async () => { try { if (navigator.wakeLock) await navigator.wakeLock.request("screen"); } catch (e) {} })();
+
+</script>
+
+</body>
+</html>
