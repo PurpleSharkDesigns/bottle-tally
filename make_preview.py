@@ -1,5 +1,4 @@
-"""Build preview.html from signs.html: same signs, but no Lock button and the
-brand tabs stay visible, so a reviewer can't get stuck. Run after signs.html changes:
+"""Build preview.html from signs.html: same signs, but no Lock button, so a reviewer can't get stuck. Run after signs.html changes:
     python3 make_preview.py
 """
 import pathlib
@@ -15,9 +14,6 @@ def swap(old, new):
 swap("<title>Event Signs — Purple Shark</title>", "<title>Event Signs Preview — Purple Shark</title>")
 swap('try { locked = localStorage.getItem(LK) === "1"; } catch(e) {}', "")
 swap("""\n  + '<button type="button" class="lk" data-lock="1">Lock</button>';""", ";")
-swap("</style></head>",
-     "#tabs{opacity:1!important;pointer-events:auto!important}\n"
-     "#hint{opacity:1!important}\n</style></head>")
 swap('<div id="hint">Tap to switch</div>', '<div id="hint">Preview &middot; tap to switch signs</div>')
 (here / "preview.html").write_text(s, encoding="utf-8")
 print("wrote preview.html", len(s))
