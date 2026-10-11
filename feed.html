@@ -1,0 +1,135 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="color-scheme" content="light dark">
+<meta name="robots" content="noindex,nofollow">
+<title>Bottle Tally — Live</title>
+<link rel="icon" type="image/png" sizes="512x512" href="icon.png">
+<link rel="apple-touch-icon" href="icon.png">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow:wght@400;500;600&family=Barlow+Condensed:wght@500;600;700&display=swap">
+<style>
+:root{--bg:#EDEBE6;--surface:#FFFFFF;--fg:#211E1B;--dim:#6A635A;--line:#D6D2C9;--brand:#5B3A8E;--beam:#A3561B;--good:#2C7A4B;--bad:#8A1F1F}
+@media (prefers-color-scheme:dark){:root{--bg:#17140F;--surface:#221E18;--fg:#F2EDE4;--dim:#A49B8D;--line:#38312A;--brand:#A98BD6;--beam:#D98A3E}}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--fg);font:16px/1.4 Barlow,system-ui,sans-serif}
+.wrap{max-width:760px;margin:0 auto;padding:20px 16px 48px}
+.top{display:flex;justify-content:space-between;align-items:flex-start;gap:12px;border-bottom:3px solid var(--brand);padding-bottom:12px}
+h1{font:700 34px/1 "Barlow Condensed",sans-serif;margin:0}
+.sub{margin:4px 0 0;color:var(--dim)}
+.chip{font-size:13px;font-weight:600;padding:5px 10px;border-radius:999px;background:var(--good);color:#fff;white-space:nowrap}
+.chip.bad{background:var(--bad)}
+.grand{display:flex;align-items:baseline;gap:12px;margin:22px 0 6px}
+.grand b{font:700 84px/0.9 "Barlow Condensed",sans-serif;color:var(--beam);font-variant-numeric:tabular-nums}
+.grand span{color:var(--dim);font-weight:500}
+h2{font:600 15px "Barlow Condensed",sans-serif;letter-spacing:.12em;text-transform:uppercase;color:var(--dim);margin:26px 0 8px}
+.ev{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:14px 16px;margin-bottom:10px}
+.ev.today{border-color:var(--brand);border-width:2px}
+.evh{display:flex;justify-content:space-between;align-items:baseline;gap:12px}
+.evh .v{font:600 22px/1.1 "Barlow Condensed",sans-serif}
+.evh .t{font:700 34px/1 "Barlow Condensed",sans-serif;font-variant-numeric:tabular-nums}
+.meta{color:var(--dim);font-size:14px;margin:2px 0 8px}
+.row{display:flex;justify-content:space-between;padding:4px 0;border-top:1px solid var(--line);font-variant-numeric:tabular-nums}
+.note{color:var(--dim);margin:8px 0;font-size:14px;white-space:pre-wrap}
+.empty{color:var(--dim);padding:28px 0}
+a{color:var(--brand)}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="top">
+    <div><h1>Bottle Tally &mdash; Live</h1><p class="sub">Suntory holiday sampling &middot; 2026</p></div>
+    <span class="chip" id="chip">Starting</span>
+  </div>
+  <div id="view"></div>
+</div>
+<script>
+/* Read-only view of Apps/Purple Shark Ideas/bottle-tally.json, which the tally page
+   writes. Uses the Dropbox sign-in already stored by the tally (or Ideas) page in this
+   browser, so it shows nothing on a device that has never been connected. */
+const DBX_KEY = "wbjpz8wzqugz10v", DBX_PATH = "/bottle-tally.json", EVERY = 15000;
+const $ = s => document.querySelector(s);
+const esc = s => String(s == null ? "" : s).replace(/[&<>"']/g, c =>
+  ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
+let refresh = null, access = null, expires = 0;
+for (const k of ["psd-tally-dbx", "psi_auth_v1"]) {
+  try { const a = JSON.parse(localStorage.getItem(k) || "null"); if (a && a.refresh) { refresh = a.refresh; break; } } catch (e) {}
+}
+async function token() {
+  if (access && Date.now() < expires - 60000) return access;
+  const r = await fetch("https://api.dropboxapi.com/oauth2/token", {
+    method: "POST", headers: { "Content-Type": "application/x-www-form-urlencoded" },
+    body: new URLSearchParams({ grant_type: "refresh_token", refresh_token: refresh, client_id: DBX_KEY })
+  });
+  if (!r.ok) throw new Error("Dropbox sign-in " + r.status);
+  const j = await r.json();
+  access = j.access_token; expires = Date.now() + (j.expires_in || 14400) * 1000;
+  return access;
+}
+async function load() {
+  const r = await fetch("https://content.dropboxapi.com/2/files/download", {
+    method: "POST",
+    headers: { "Authorization": "Bearer " + await token(), "Dropbox-API-Arg": JSON.stringify({ path: DBX_PATH }) }
+  });
+  if (r.status === 409) return {};
+  if (!r.ok) throw new Error("Dropbox " + r.status);
+  try { return JSON.parse(await r.text()) || {}; } catch (e) { return {}; }
+}
+function fdate(iso) {
+  const [y, m, d] = String(iso || "").split("-").map(Number);
+  if (!y) return "";
+  return new Date(y, m - 1, d).toLocaleDateString("en-US", { weekday: "short", month: "short", day: "numeric" });
+}
+function hhmm(iso) {
+  const d = new Date(iso);
+  return isNaN(d) ? "" : d.toLocaleTimeString("en-US", { hour: "numeric", minute: "2-digit" });
+}
+function todayISO() {
+  const n = new Date();
+  return `${n.getFullYear()}-${String(n.getMonth() + 1).padStart(2, "0")}-${String(n.getDate()).padStart(2, "0")}`;
+}
+function card(e, today) {
+  const rows = [];
+  if (e.c1) rows.push([e.b1, e.c1]);
+  if (e.c2) rows.push([e.b2, e.c2]);
+  Object.keys(e.extras || {}).forEach(n => { if (e.extras[n]) rows.push([n, e.extras[n]]); });
+  if (e.spoiled) rows.push(["Spoiled labels", e.spoiled]);
+  return `<div class="ev${today ? " today" : ""}">
+    <div class="evh"><span class="v">${esc(e.venue)}</span><span class="t">${e.total || 0}</span></div>
+    <div class="meta">${esc(fdate(e.date))} &middot; ${esc(e.city)}${e.updatedAt ? " &middot; last tap " + esc(hhmm(e.updatedAt)) : ""}</div>
+    ${rows.map(r => `<div class="row"><span>${esc(r[0])}</span><span>${r[1]}</span></div>`).join("")}
+    ${e.notes ? `<p class="note">${esc(e.notes)}</p>` : ""}
+  </div>`;
+}
+function render(doc) {
+  const evs = Object.values(doc.events || {}).filter(e => e && (e.total || e.spoiled || e.notes));
+  const today = todayISO();
+  const now = evs.filter(e => e.date === today);
+  const rest = evs.filter(e => e.date !== today).sort((a, b) => String(b.date).localeCompare(String(a.date)));
+  const grand = evs.reduce((a, e) => a + (e.total || 0), 0);
+  let h = `<div class="grand"><b>${grand}</b><span>bottles this season<br>${evs.length} event${evs.length === 1 ? "" : "s"} counted</span></div>`;
+  if (!evs.length) h += `<p class="empty">Nothing counted yet. Counts appear here within a few seconds of a tap on the phone.</p>`;
+  if (now.length) h += `<h2>Today</h2>` + now.map(e => card(e, true)).join("");
+  if (rest.length) h += `<h2>Earlier</h2>` + rest.map(e => card(e, false)).join("");
+  $("#view").innerHTML = h;
+}
+function chip(text, bad) { const c = $("#chip"); c.textContent = text; c.className = "chip" + (bad ? " bad" : ""); }
+async function tick() {
+  try {
+    render(await load());
+    chip("Live ✓ " + hhmm(new Date().toISOString()));
+  } catch (e) { chip("Can't reach Dropbox", true); }
+}
+if (!refresh) {
+  chip("Not connected", true);
+  $("#view").innerHTML = `<p class="empty">This device isn't connected to the tally's Dropbox yet.
+    Open the <a href="./">tally page</a> here, tap <b>Connect Dropbox</b>, then come back.</p>`;
+} else {
+  tick();
+  setInterval(() => { if (!document.hidden) tick(); }, EVERY);
+  document.addEventListener("visibilitychange", () => { if (!document.hidden) tick(); });
+}
+</script>
+</body>
+</html>

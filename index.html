@@ -707,9 +707,149 @@ checkStorage();
 setChip("local");
 renderList();
 
+/* ---------- Dropbox mirror (GitHub Pages build) ----------
+   Outside Claude there is no built-in cloud, so counts mirror to one JSON file in
+   the Dropbox app folder: Apps/Purple Shark Ideas/bottle-tally.json. Same Dropbox
+   app as the Ideas page (PKCE, public key, app-folder only). The object returned
+   by dbxInit() mimics the db calls used above, so the save/merge code is shared. */
+const DBX_KEY = "wbjpz8wzqugz10v", DBX_PATH = "/bottle-tally.json";
+const DBX_LS = "psd-tally-dbx", DBX_BORROW = "psi_auth_v1";
+const dbxAuth = { refresh: null, access: null, expires: 0, own: false };
+function dbxRedirect() { return location.origin + location.pathname.replace(/index\.html$/, ""); }
+function dbxB64(bytes) {
+  let t = ""; new Uint8Array(bytes).forEach(b => { t += String.fromCharCode(b); });
+  return btoa(t).replace(/\+/g, "-").replace(/\//g, "_").replace(/=+$/, "");
+}
+function dbxRestore() {
+  for (const [k, own] of [[DBX_LS, true], [DBX_BORROW, false]]) {
+    try {
+      const a = JSON.parse(localStorage.getItem(k) || "null");
+      if (a && a.refresh) { dbxAuth.refresh = a.refresh; dbxAuth.own = own; return true; }
+    } catch (e) {}
+  }
+  return false;
+}
+async function dbxConnect() {
+  const verifier = dbxB64(crypto.getRandomValues(new Uint8Array(64)));
+  const challenge = dbxB64(await crypto.subtle.digest("SHA-256", new TextEncoder().encode(verifier)));
+  sessionStorage.setItem("psd-tally-pkce", verifier);
+  location.href = "https://www.dropbox.com/oauth2/authorize?client_id=" + DBX_KEY +
+    "&response_type=code&code_challenge=" + challenge + "&code_challenge_method=S256" +
+    "&token_access_type=offline&redirect_uri=" + encodeURIComponent(dbxRedirect());
+}
+async function dbxTokenCall(params) {
+  const r = await fetch("https://api.dropboxapi.com/oauth2/token", {
+    method: "POST", headers: { "Content-Type": "application/x-www-form-urlencoded" },
+    body: new URLSearchParams(Object.assign({ client_id: DBX_KEY }, params))
+  });
+  if (!r.ok) { const e = new Error("Dropbox sign-in " + r.status); e.status = r.status; throw e; }
+  const j = await r.json();
+  dbxAuth.access = j.access_token;
+  dbxAuth.expires = Date.now() + (j.expires_in || 14400) * 1000;
+  return j;
+}
+async function dbxToken() {
+  if (dbxAuth.access && Date.now() < dbxAuth.expires - 60000) return dbxAuth.access;
+  try { await dbxTokenCall({ grant_type: "refresh_token", refresh_token: dbxAuth.refresh }); }
+  catch (e) {
+    if (e.status === 400 || e.status === 401) {   /* revoked — ask to connect again */
+      if (dbxAuth.own) localStorage.removeItem(DBX_LS);
+      dbxAuth.refresh = null; dbxBar(true);
+    }
+    throw e;
+  }
+  return dbxAuth.access;
+}
+function dbxBar(show) {
+  let b = $("#dbxbar");
+  if (!show) { if (b) b.hidden = true; return; }
+  if (!b) {
+    b = document.createElement("p");
+    b.id = "dbxbar"; b.className = "note";
+    b.innerHTML = 'Counts are on this phone only. <button type="button" class="mskip" ' +
+      'style="display:inline;width:auto;margin:0;font-size:inherit">Connect Dropbox</button> to share them live.';
+    b.querySelector("button").addEventListener("click", () => { dbxConnect().catch(e => oops("dropbox", e)); });
+    $("#err").after(b);
+  }
+  b.hidden = false;
+}
+async function dbxInit() {
+  const q = new URLSearchParams(location.search), code = q.get("code");
+  if (code || q.get("error")) history.replaceState({}, "", dbxRedirect());
+  if (code) {
+    const verifier = sessionStorage.getItem("psd-tally-pkce") || "";
+    sessionStorage.removeItem("psd-tally-pkce");
+    try {
+      const j = await dbxTokenCall({ code, grant_type: "authorization_code",
+                                     code_verifier: verifier, redirect_uri: dbxRedirect() });
+      if (j.refresh_token) {
+        dbxAuth.refresh = j.refresh_token; dbxAuth.own = true;
+        localStorage.setItem(DBX_LS, JSON.stringify({ refresh: j.refresh_token }));
+      }
+    } catch (e) {}
+  }
+  if (!dbxAuth.refresh && !dbxRestore()) { dbxBar(true); return null; }
+
+  let doc = null, rev = "";
+  const ascii = o => JSON.stringify(o).replace(/[\u007f-￿]/g,
+    c => "\\u" + ("000" + c.charCodeAt(0).toString(16)).slice(-4));
+  async function pull() {
+    const r = await fetch("https://content.dropboxapi.com/2/files/download", {
+      method: "POST",
+      headers: { "Authorization": "Bearer " + await dbxToken(), "Dropbox-API-Arg": ascii({ path: DBX_PATH }) }
+    });
+    if (!r.ok) {
+      const body = await r.text();
+      if (r.status === 409 && body.indexOf("not_found") >= 0) { doc = {}; rev = ""; return; }
+      throw new Error("Dropbox download " + r.status + " " + body.slice(0, 120));
+    }
+    let meta = {};
+    try { meta = JSON.parse(r.headers.get("dropbox-api-result") || "{}"); } catch (e) {}
+    const text = await r.text();
+    try { doc = JSON.parse(text) || {}; } catch (e) { doc = {}; }
+    rev = meta.rev || "";
+  }
+  /* Re-read and re-apply on a write conflict, so another device's nights survive. */
+  async function push(mutate) {
+    for (let i = 0; i < 4; i++) {
+      if (!doc) await pull();
+      mutate(doc);
+      doc.updatedAt = new Date().toISOString();
+      doc.grandTotal = Object.values(doc.events || {}).reduce((a, v) => a + ((v && v.total) || 0), 0);
+      const r = await fetch("https://content.dropboxapi.com/2/files/upload", {
+        method: "POST",
+        headers: {
+          "Authorization": "Bearer " + await dbxToken(), "Content-Type": "application/octet-stream",
+          "Dropbox-API-Arg": ascii({ path: DBX_PATH, autorename: false, mute: true,
+                                     mode: rev ? { ".tag": "update", update: rev } : { ".tag": "add" } })
+        },
+        body: JSON.stringify(doc, null, 2)
+      });
+      if (r.ok) { rev = (await r.json()).rev || ""; return; }
+      const body = await r.text();
+      if (r.status === 409 && body.indexOf("conflict") >= 0) { doc = null; continue; }
+      throw new Error("Dropbox upload " + r.status + " " + body.slice(0, 120));
+    }
+    throw new Error("Dropbox kept changing underneath us");
+  }
+  return {
+    doc(path) {
+      const [col, id] = path.split("/");
+      return {
+        async get() { await pull(); return (doc[col] || {})[id] || null; },
+        async set(v) { await push(d => { (d[col] = d[col] || {})[id] = v; }); }
+      };
+    },
+    collection(col) {
+      return { async get() { await pull(); return Object.values(doc[col] || {}); } };
+    }
+  };
+}
+
 (async () => {
   try { db = window.claude && window.claude.use ? await window.claude.use("db") : null; }
   catch (e) { db = null; }
+  if (!db) { try { db = await dbxInit(); } catch (e) { db = null; } }
   if (!db) return;
   setChip("live");
   try {
