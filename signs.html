@@ -82,7 +82,8 @@ footer em{font-style:normal;color:var(--gold);letter-spacing:.14em;text-transfor
   color:var(--dim);font-family:var(--label);font-size:13px;font-weight:600;letter-spacing:.22em;
   text-transform:uppercase;padding:13px 8px;cursor:pointer}
 #tabs button[aria-current="true"]{color:var(--cream);border-bottom-color:var(--gold)}
-#hold{position:fixed;right:0;bottom:0;width:118px;height:118px;z-index:9;
+#hold{position:fixed;right:0;bottom:0;width:150px;height:150px;z-index:9;
+  touch-action:none;-webkit-touch-callout:none;-webkit-user-select:none;user-select:none;
   display:flex;align-items:center;justify-content:center}
 #dot{width:7px;height:7px;border-radius:50%;background:rgba(201,169,78,.3);
   transition:width .2s,height .2s,background .2s;pointer-events:none}
@@ -186,6 +187,9 @@ $("#stage").onclick = () => {
   const start = ev => {
     if(!locked) return;
     ev.preventDefault();
+    /* keep the press even if the finger rolls off the corner, and stop iPad Safari
+       from cancelling it as a scroll or text-selection gesture */
+    try { hold.setPointerCapture(ev.pointerId); } catch(e) {}
     hold.classList.add("arming");
     clearTimeout(ht);
     ht = setTimeout(() => { hold.classList.remove("arming"); setLocked(false); }, 2400);
@@ -194,7 +198,7 @@ $("#stage").onclick = () => {
   hold.addEventListener("pointerdown", start);
   hold.addEventListener("pointerup", stop);
   hold.addEventListener("pointercancel", stop);
-  hold.addEventListener("pointerleave", stop);
+  hold.addEventListener("touchstart", e => { if(locked) e.preventDefault(); }, {passive:false});
   hold.addEventListener("contextmenu", e => e.preventDefault());
 })();
 
