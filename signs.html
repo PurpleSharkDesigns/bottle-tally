@@ -58,7 +58,7 @@ h1 em{font-style:italic;color:var(--gold);display:inline-block;margin-top:.12em}
 .offer{margin:clamp(16px,2.6vh,28px) 0 0;padding:clamp(12px,1.5vh,17px) clamp(14px,1.7vw,20px);
   border:1px solid rgba(201,169,78,.42);border-radius:4px;background:rgba(201,169,78,.07);
   font-family:var(--display);font-size:clamp(16px,1.72vw,22px);line-height:1.35;color:var(--cream);
-  text-wrap:balance}
+  width:fit-content;max-width:100%;white-space:nowrap}
 .offer.ph{border-style:dashed;color:var(--gold);font-style:italic;opacity:.92}
 
 footer{display:flex;align-items:center;gap:clamp(11px,1.3vw,16px);flex:none;
@@ -131,7 +131,8 @@ function render(){
   const s = D.signs[i];
   // one featured pour reads "the bourbon", several read "the bourbons"
   const offer = s.pours.length === 1 ? COPY.offer.replace("bourbons", "bourbon") : COPY.offer;
-  const offerHTML = '<div class="offer">'+offer+'</div>';
+  // fixed two-line break so the box hugs the words: no empty half, no stray last word
+  const offerHTML = '<div class="offer">'+offer.replace(" of the ", "<br>of the ")+'</div>';
   $("#stage").innerHTML = `
     <div class="photo"><img src="data:image/jpeg;base64,${D.img[s.key]}" alt=""></div>
     <div class="panel" style="--accent:var(--${s.accent})">
