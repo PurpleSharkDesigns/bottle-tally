@@ -93,7 +93,9 @@ function card(e, today) {
   const rows = [];
   if (e.c1) rows.push([e.b1, e.c1]);
   if (e.c2) rows.push([e.b2, e.c2]);
-  Object.keys(e.extras || {}).forEach(n => { if (e.extras[n]) rows.push([n, e.extras[n]]); });
+  const counts = Object.assign({}, e.extras, e.counts);
+  (e.bottles || []).concat(Object.keys(counts)).filter((n, i, a) => a.indexOf(n) === i)
+    .forEach(n => { if (counts[n]) rows.push([n, counts[n]]); });
   if (e.spoiled) rows.push(["Spoiled labels", e.spoiled]);
   return `<div class="ev${today ? " today" : ""}">
     <div class="evh"><span class="v">${esc(e.venue)}</span><span class="t">${e.total || 0}</span></div>

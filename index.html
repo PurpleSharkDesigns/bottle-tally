@@ -92,6 +92,12 @@ h1{font-family:var(--display);font-size:30px;font-weight:700;letter-spacing:.4px
 .minus:active{background:rgba(0,0,0,.4)}
 .minus:focus-visible{outline:2px solid #fff;outline-offset:2px}
 
+#slabs.tight .slab{min-height:76px;padding:12px 16px;margin-bottom:9px}
+#slabs.tight .slab .nm{font-size:19px}
+#slabs.tight .slab .nm small{font-size:10.5px;margin-bottom:1px}
+#slabs.tight .slab .n{font-size:38px}
+#slabs.tight .slab .nbox{width:76px;gap:5px}
+#slabs.tight .minus{height:30px;font-size:14px}
 .sec{font-family:var(--display);font-size:13px;font-weight:700;letter-spacing:1.1px;text-transform:uppercase;
   color:var(--dim);margin:16px 0 7px}
 .chips{display:grid;grid-template-columns:repeat(auto-fill,minmax(168px,1fr));gap:8px;margin-bottom:4px}
@@ -195,10 +201,10 @@ h1{font-family:var(--display);font-size:30px;font-weight:700;letter-spacing:.4px
 </div>
 
 <script>
-const EVENTS = [{"id":"PSD-2026-1017A","date":"2026-10-17","time":"2:00–4:00 PM","venue":"World Wines And Liquor","city":"Mentor","b1":"Jim Beam","b2":"Jim Beam Black 7 Yr"},{"id":"PSD-2026-1017B","date":"2026-10-17","time":"5:00–7:00 PM","venue":"World Wines And Liquor","city":"Mentor","b1":"Basil Hayden","b2":"Knob Creek 9 Yr"},{"id":"PSD-2026-1023A","date":"2026-10-23","time":"6:00–8:00 PM","venue":"Carfagna's Market","city":"Columbus","b1":"Knob Creek 9 Yr","b2":"Knob Creek Rye"},{"id":"PSD-2026-1105A","date":"2026-11-05","time":"6:00–8:00 PM","venue":"Arena Wine & Spirits","city":"Columbus","b1":"Jim Beam","b2":"Jim Beam Black 7 Yr"},{"id":"PSD-2026-1112A","date":"2026-11-12","time":"6:00–8:00 PM","venue":"Kroger","city":"Westerville","b1":"Basil Hayden","b2":"Knob Creek 9 Yr"},{"id":"PSD-2026-1113A","date":"2026-11-13","time":"6:00–8:00 PM","venue":"Giant Eagle Market District","city":"Columbus","b1":"Knob Creek 9 Yr","b2":"Knob Creek Rye"},{"id":"PSD-2026-1114A","date":"2026-11-14","time":"4:00–6:00 PM","venue":"Proof Liquor Company","city":"Strongsville","b1":"Basil Hayden","b2":"Knob Creek 9 Yr"},{"id":"PSD-2026-1119A","date":"2026-11-19","time":"6:00–8:00 PM","venue":"Kroger","city":"Grove City","b1":"Basil Hayden","b2":"Knob Creek 9 Yr"},{"id":"PSD-2026-1121A","date":"2026-11-21","time":"2:00–4:00 PM","venue":"Buehler's","city":"Medina","b1":"Jim Beam","b2":"Jim Beam Black 7 Yr"},{"id":"PSD-2026-1121B","date":"2026-11-21","time":"5:00–7:00 PM","venue":"Buehler's","city":"Medina","b1":"Knob Creek 9 Yr","b2":"Knob Creek Rye"},{"id":"PSD-2026-1122A","date":"2026-11-22","time":"6:00–8:00 PM","venue":"Chateau Wine & Spirits","city":"Dublin","b1":"Jim Beam","b2":"Jim Beam Black 7 Yr"},{"id":"PSD-2026-1123A","date":"2026-11-23","time":"6:00–8:00 PM","venue":"Chateau Wine & Spirits","city":"Dublin","b1":"Knob Creek 9 Yr","b2":"Knob Creek Rye"},{"id":"PSD-2026-1128A","date":"2026-11-28","time":"2:00–4:00 PM","venue":"Kroger","city":"Sunbury","b1":"Jim Beam","b2":"Jim Beam Black 7 Yr"},{"id":"PSD-2026-1128B","date":"2026-11-28","time":"5:00–7:00 PM","venue":"Kroger","city":"Sunbury","b1":"Basil Hayden","b2":"Knob Creek 9 Yr"},{"id":"PSD-2026-1204A","date":"2026-12-04","time":"6:00–8:00 PM","venue":"Giant Eagle Market District","city":"Hilliard","b1":"Basil Hayden","b2":"Knob Creek 9 Yr"},{"id":"PSD-2026-1205A","date":"2026-12-05","time":"1:00–3:00 PM","venue":"Giant Eagle Market District","city":"Strongsville","b1":"Basil Hayden","b2":"Knob Creek 9 Yr"},{"id":"PSD-2026-1205B","date":"2026-12-05","time":"6:00–8:00 PM","venue":"Giant Eagle","city":"Wadsworth","b1":"Knob Creek 9 Yr","b2":"Knob Creek Rye"},{"id":"PSD-2026-1210A","date":"2026-12-10","time":"6:00–8:00 PM","venue":"Northwest Wine and Spirits","city":"Columbus","b1":"Knob Creek 9 Yr","b2":"Knob Creek Rye"},{"id":"PSD-2026-1211A","date":"2026-12-11","time":"6:00–8:00 PM","venue":"Giant Eagle Market District","city":"Columbus","b1":"Jim Beam","b2":"Jim Beam Black 7 Yr"},{"id":"PSD-2026-1212A","date":"2026-12-12","time":"2:00–4:00 PM","venue":"Jungle Jim's International Market","city":"Fairfield","b1":"Jim Beam","b2":"Jim Beam Black 7 Yr"},{"id":"PSD-2026-1212B","date":"2026-12-12","time":"5:00–7:00 PM","venue":"Jungle Jim's International Market","city":"Fairfield","b1":"Basil Hayden","b2":"Knob Creek 9 Yr"},{"id":"PSD-2026-1217A","date":"2026-12-17","time":"6:00–8:00 PM","venue":"Arena Wine & Spirits","city":"Columbus","b1":"Basil Hayden","b2":"Knob Creek 9 Yr"},{"id":"PSD-2026-1218A","date":"2026-12-18","time":"6:00–8:00 PM","venue":"Giant Eagle Market District","city":"Dublin","b1":"Basil Hayden","b2":"Knob Creek 9 Yr"},{"id":"PSD-2026-1219A","date":"2026-12-19","time":"2:00–4:00 PM","venue":"Jungle Jim's / Eastgate","city":"Cincinnati","b1":"Knob Creek 9 Yr","b2":"Knob Creek Rye"},{"id":"PSD-2026-1226A","date":"2026-12-26","time":"5:00–7:00 PM","venue":"Kroger","city":"Delaware","b1":"Knob Creek 9 Yr","b2":"Knob Creek Rye"}];
+const EVENTS = [{"id":"PSD-2026-1017A","date":"2026-10-17","time":"2:00–4:00 PM","venue":"World Wines And Liquor","city":"Mentor","bottles":["Jim Beam Black 7 Yr"]},{"id":"PSD-2026-1017B","date":"2026-10-17","time":"5:00–7:00 PM","venue":"World Wines And Liquor","city":"Mentor","bottles":["Knob Creek 9 Yr","Knob Creek Rye","Basil Hayden","Basil Hayden Golden Rye"]},{"id":"PSD-2026-1023A","date":"2026-10-23","time":"6:00–8:00 PM","venue":"Carfagna's Market","city":"Columbus","bottles":["Knob Creek 9 Yr","Knob Creek Rye"]},{"id":"PSD-2026-1105A","date":"2026-11-05","time":"6:00–8:00 PM","venue":"Arena Wine & Spirits","city":"Columbus","bottles":["Jim Beam Black 7 Yr"]},{"id":"PSD-2026-1112A","date":"2026-11-12","time":"6:00–8:00 PM","venue":"Kroger","city":"Westerville","bottles":["Knob Creek 9 Yr","Knob Creek Rye","Basil Hayden","Basil Hayden Golden Rye"]},{"id":"PSD-2026-1113A","date":"2026-11-13","time":"6:00–8:00 PM","venue":"Giant Eagle Market District","city":"Columbus","bottles":["Knob Creek 9 Yr","Knob Creek Rye"]},{"id":"PSD-2026-1114A","date":"2026-11-14","time":"4:00–6:00 PM","venue":"Proof Liquor Company","city":"Strongsville","bottles":["Knob Creek 9 Yr","Knob Creek Rye","Basil Hayden","Basil Hayden Golden Rye"]},{"id":"PSD-2026-1119A","date":"2026-11-19","time":"6:00–8:00 PM","venue":"Kroger","city":"Grove City","bottles":["Knob Creek 9 Yr","Knob Creek Rye","Basil Hayden","Basil Hayden Golden Rye"]},{"id":"PSD-2026-1121A","date":"2026-11-21","time":"2:00–4:00 PM","venue":"Buehler's","city":"Medina","bottles":["Jim Beam Black 7 Yr"]},{"id":"PSD-2026-1121B","date":"2026-11-21","time":"5:00–7:00 PM","venue":"Buehler's","city":"Medina","bottles":["Knob Creek 9 Yr","Knob Creek Rye"]},{"id":"PSD-2026-1122A","date":"2026-11-22","time":"6:00–8:00 PM","venue":"Chateau Wine & Spirits","city":"Dublin","bottles":["Jim Beam Black 7 Yr"]},{"id":"PSD-2026-1123A","date":"2026-11-23","time":"6:00–8:00 PM","venue":"Chateau Wine & Spirits","city":"Dublin","bottles":["Knob Creek 9 Yr","Knob Creek Rye"]},{"id":"PSD-2026-1128A","date":"2026-11-28","time":"2:00–4:00 PM","venue":"Kroger","city":"Sunbury","bottles":["Jim Beam Black 7 Yr"]},{"id":"PSD-2026-1128B","date":"2026-11-28","time":"5:00–7:00 PM","venue":"Kroger","city":"Sunbury","bottles":["Knob Creek 9 Yr","Knob Creek Rye","Basil Hayden","Basil Hayden Golden Rye"]},{"id":"PSD-2026-1204A","date":"2026-12-04","time":"6:00–8:00 PM","venue":"Giant Eagle Market District","city":"Hilliard","bottles":["Knob Creek 9 Yr","Knob Creek Rye","Basil Hayden","Basil Hayden Golden Rye"]},{"id":"PSD-2026-1205A","date":"2026-12-05","time":"1:00–3:00 PM","venue":"Giant Eagle Market District","city":"Strongsville","bottles":["Knob Creek 9 Yr","Knob Creek Rye","Basil Hayden","Basil Hayden Golden Rye"]},{"id":"PSD-2026-1205B","date":"2026-12-05","time":"6:00–8:00 PM","venue":"Giant Eagle","city":"Wadsworth","bottles":["Knob Creek 9 Yr","Knob Creek Rye"]},{"id":"PSD-2026-1210A","date":"2026-12-10","time":"6:00–8:00 PM","venue":"Northwest Wine and Spirits","city":"Columbus","bottles":["Knob Creek 9 Yr","Knob Creek Rye"]},{"id":"PSD-2026-1211A","date":"2026-12-11","time":"6:00–8:00 PM","venue":"Giant Eagle Market District","city":"Columbus","bottles":["Jim Beam Black 7 Yr"]},{"id":"PSD-2026-1212A","date":"2026-12-12","time":"2:00–4:00 PM","venue":"Jungle Jim's International Market","city":"Fairfield","bottles":["Jim Beam Black 7 Yr"]},{"id":"PSD-2026-1212B","date":"2026-12-12","time":"5:00–7:00 PM","venue":"Jungle Jim's International Market","city":"Fairfield","bottles":["Knob Creek 9 Yr","Knob Creek Rye","Basil Hayden","Basil Hayden Golden Rye"]},{"id":"PSD-2026-1217A","date":"2026-12-17","time":"6:00–8:00 PM","venue":"Arena Wine & Spirits","city":"Columbus","bottles":["Knob Creek 9 Yr","Knob Creek Rye","Basil Hayden","Basil Hayden Golden Rye"]},{"id":"PSD-2026-1218A","date":"2026-12-18","time":"6:00–8:00 PM","venue":"Giant Eagle Market District","city":"Dublin","bottles":["Knob Creek 9 Yr","Knob Creek Rye","Basil Hayden","Basil Hayden Golden Rye"]},{"id":"PSD-2026-1219A","date":"2026-12-19","time":"2:00–4:00 PM","venue":"Jungle Jim's / Eastgate","city":"Cincinnati","bottles":["Knob Creek 9 Yr","Knob Creek Rye"]},{"id":"PSD-2026-1226A","date":"2026-12-26","time":"5:00–7:00 PM","venue":"Kroger","city":"Delaware","bottles":["Knob Creek 9 Yr","Knob Creek Rye"]}];
 
-/* Other bottles each brand sells, from the brand sites. Scheduled bottles are the big
-   slabs; these fill the "also sold tonight" row. Edit the list on the All dates screen. */
+/* Every bottle each brand sells. The event's featured bottles get the big buttons;
+   the rest fill the "also sold" row. Edit the lists from the All dates screen. */
 const FAMILY_DEFAULT = {
   "Jim Beam": ["Jim Beam", "Jim Beam Black 7 Yr", "Jim Beam Devil's Cut", "Jim Beam Double Oak",
                "Jim Beam Single Barrel", "Jim Beam Rye", "Jim Beam Winter Reserve"],
@@ -216,7 +222,6 @@ const esc = (s) => String(s == null ? "" : s).replace(/[&<>"']/g, c =>
 
 let db = null, store = {}, families = null, current = null;
 
-/* If anything ever throws on the phone, say so on screen instead of going quiet. */
 function oops(where, err) {
   const b = $("#err");
   b.textContent = "Hiccup in " + where + ": " + ((err && err.message) || err);
@@ -230,7 +235,6 @@ function famOf(bottle) {
   if (n.includes("knob creek")) return "Knob Creek";
   return "Jim Beam";
 }
-/* For typed-in names: only color it when the brand is actually in the name. */
 function famLoose(bottle) {
   const n = String(bottle).toLowerCase();
   if (n.includes("basil hayden")) return "Basil Hayden";
@@ -243,26 +247,36 @@ function famClass(f) {
 }
 function lists() { return families || FAMILY_DEFAULT; }
 function extrasFor(e) {
-  const fams = [...new Set([famOf(e.b1), famOf(e.b2)])];
+  const fams = [...new Set(e.bottles.map(famOf))];
   const out = [];
   fams.forEach(f => (lists()[f] || []).forEach(b => {
-    if (b !== e.b1 && b !== e.b2 && !out.some(x => x.name === b)) out.push({ name: b, fam: f });
+    if (!e.bottles.includes(b) && !out.some(x => x.name === b)) out.push({ name: b, fam: f });
   }));
   return out;
 }
-function blank() { return { c1: 0, c2: 0, extras: {}, custom: [], hist: [], spoiled: 0, notes: "" }; }
+function blank() { return { counts: {}, custom: [], hist: [], spoiled: 0, notes: "" }; }
 function rec(id) {
   const r = store[id] || (store[id] = blank());
-  if (!r.extras || typeof r.extras !== "object") r.extras = {};
+  if (!r.counts || typeof r.counts !== "object") r.counts = {};
+  /* carry across anything saved under the old two-bottle shape */
+  if (r.extras && typeof r.extras === "object") {
+    Object.keys(r.extras).forEach(k => { r.counts[k] = (r.counts[k] || 0) + r.extras[k]; });
+    delete r.extras;
+  }
+  const e = EVENTS.find(x => x.id === id);
+  if (e && (typeof r.c1 === "number" || typeof r.c2 === "number")) {
+    if (r.c1 && e.bottles[0]) r.counts[e.bottles[0]] = (r.counts[e.bottles[0]] || 0) + r.c1;
+    if (r.c2 && e.bottles[1]) r.counts[e.bottles[1]] = (r.counts[e.bottles[1]] || 0) + r.c2;
+    delete r.c1; delete r.c2;
+  }
   if (!Array.isArray(r.custom)) r.custom = [];
-  if (!Array.isArray(r.hist)) r.hist = [];   /* undo trail, kept on this phone only */
-  ["c1", "c2", "spoiled"].forEach(k => { if (typeof r[k] !== "number") r[k] = 0; });
+  if (!Array.isArray(r.hist)) r.hist = [];
+  if (typeof r.spoiled !== "number") r.spoiled = 0;
   if (typeof r.notes !== "string") r.notes = "";
   return r;
 }
-function extrasTotal(r) { return Object.values(r.extras || {}).reduce((a, b) => a + (b || 0), 0); }
-function evTotal(id) { const r = store[id]; return r ? (r.c1 || 0) + (r.c2 || 0) + extrasTotal(r) : 0; }
-/* Every typed-in name from any night, newest first — so the second time it is one tap. */
+function allTotal(r) { return Object.values(r.counts || {}).reduce((a, b) => a + (b || 0), 0); }
+function evTotal(id) { const r = store[id]; return r ? allTotal(r) : 0; }
 function recentCustom(exclude) {
   const out = [];
   EVENTS.slice().reverse().forEach(e => {
@@ -311,6 +325,7 @@ function loadLocal() {
 }
 const pending = new Set();
 let timer = null, writing = false, famDirty = false, lastErr = "";
+let lastSaved = null, failCount = 0;
 function queueSave(id) {
   if (id && store[id]) store[id].updatedAt = new Date().toISOString();
   cacheLocal();
@@ -327,9 +342,9 @@ async function flush() {
     try {
       await db.doc("events/" + id).set({
         invoice: id, date: e.date, venue: e.venue, city: e.city, agency: e.agency,
-        b1: e.b1, b2: e.b2, c1: r.c1, c2: r.c2, extras: r.extras, custom: r.custom,
+        bottles: e.bottles, counts: r.counts, custom: r.custom,
         spoiled: r.spoiled, notes: r.notes,
-        total: r.c1 + r.c2 + extrasTotal(r), updatedAt: new Date().toISOString()
+        total: allTotal(r), updatedAt: new Date().toISOString()
       });
     } catch (err) {
       pending.add(id); failCount++; lastErr = (err && err.message) || String(err);
@@ -347,16 +362,17 @@ async function flush() {
   writing = false;
   if (pending.size || famDirty) { clearTimeout(timer); timer = setTimeout(flush, 1500); }
 }
-let lastSaved = null, failCount = 0;
+function hhmm() {
+  return new Date().toLocaleTimeString("en-US", { hour: "numeric", minute: "2-digit" });
+}
 function setChip(state, extra) {
   const c = $("#chip");
   if (state === "live") {
-    c.textContent = lastSaved ? "Cloud \u2713 " + lastSaved : "Cloud ready";
+    c.textContent = lastSaved ? "Cloud ✓ " + lastSaved : "Cloud ready";
     c.className = "statechip live";
   } else if (state === "fail") {
     c.textContent = "Cloud save failing";
-    c.className = "statechip bad";
-    c.title = extra || "";
+    c.className = "statechip bad"; c.title = extra || "";
   } else if (storageOK === false) {
     c.textContent = "This session only";
     c.className = "statechip bad";
@@ -366,10 +382,6 @@ function setChip(state, extra) {
     c.className = "statechip local";
     c.title = "Counting works normally. Copy your numbers out after each event.";
   }
-}
-function hhmm() {
-  const d = new Date();
-  return d.toLocaleTimeString("en-US", { hour: "numeric", minute: "2-digit" });
 }
 
 /* ---------- "which bottle?" window ---------- */
@@ -393,9 +405,7 @@ function take(name) {
   if (fn) fn(n);
 }
 
-/* ---------- one click handler for the whole app ----------
-   Everything is a data-act attribute, so nothing depends on wiring up
-   individual buttons after a redraw. */
+/* ---------- one click handler for the whole app ---------- */
 function onTap(ev) {
   const t = ev.target.closest("[data-act]");
   if (!t) return;
@@ -403,38 +413,30 @@ function onTap(ev) {
   try {
     if (act === "open") { renderEvent(t.dataset.id); return; }
     if (act === "lists") { renderLists(); return; }
-    if (act === "export") { renderExport(); return; }
-    if (act === "copy") { doCopy(t); return; }
     if (act === "savelists") { saveLists(); return; }
     if (act === "home") { renderList(); return; }
+    if (act === "export") { renderExport(); return; }
+    if (act === "copy") { doCopy(t); return; }
     if (act === "mcancel") { closeModal(); return; }
     if (act === "madd") { take($("#mname").value); return; }
     if (act === "mskip") { const fn = modalPick; closeModal(); if (fn) fn("Other"); return; }
     if (act === "reuse") { take(b); return; }
     if (!current) return;
     const id = current, e = EVENTS.find(x => x.id === id), r = rec(id);
-    if (act === "c1") bump(r, "c1", 1, e.b1);
-    else if (act === "c2") bump(r, "c2", 1, e.b2);
-    else if (act === "c1-") bump(r, "c1", -1);
-    else if (act === "c2-") bump(r, "c2", -1);
-    else if (act === "sp+") bump(r, "spoiled", 1, "spoiled");
-    else if (act === "sp-") bump(r, "spoiled", -1);
-    else if (act === "x") addExtra(r, b, false);
-    else if (act === "x-") subExtra(r, b);
+    if (act === "add") addOne(r, b, false);
+    else if (act === "sub") subOne(r, b);
+    else if (act === "sp+") { r.spoiled++; push(r, { t: "sp", label: "spoiled" }); }
+    else if (act === "sp-") r.spoiled = Math.max(0, r.spoiled - 1);
     else if (act === "undo") undo(r);
     else if (act === "reset") { armReset(t); return; }
-    else if (act === "reset2") {
-      store[id] = blank();
-      queueSave(id); renderEvent(id); return;
-    }
+    else if (act === "reset2") { store[id] = blank(); queueSave(id); renderEvent(id); return; }
     else if (act === "other") {
-      const onScreen = extrasFor(e).map(x => x.name).concat(r.custom, [e.b1, e.b2]);
+      const onScreen = extrasFor(e).map(x => x.name).concat(r.custom, e.bottles);
       openModal(name => {
         try {
           if (name !== "Other" && !r.custom.includes(name)) {
-            r.custom.push(name);
-            addExtra(r, name, true);
-          } else addExtra(r, name, false);
+            r.custom.push(name); addOne(r, name, true);
+          } else { addOne(r, name, false); queueSave(id); paint(); }
         } catch (err) { oops("adding that bottle", err); }
       }, onScreen);
       return;
@@ -443,26 +445,34 @@ function onTap(ev) {
   } catch (err) { oops("that button", err); }
 }
 function push(r, a) { r.hist.push(a); if (r.hist.length > 80) r.hist.shift(); }
-function bump(r, k, d, label) {
-  r[k] = Math.max(0, (r[k] || 0) + d);
-  if (d > 0) push(r, { t: "key", k, label });
-}
-function addExtra(r, name, created) {
-  r.extras[name] = (r.extras[name] || 0) + 1;
-  push(r, { t: "extra", k: name, label: name, created: !!created });
+function addOne(r, name, created) {
+  r.counts[name] = (r.counts[name] || 0) + 1;
+  push(r, { t: "b", k: name, label: name, created: !!created });
   if (created) { queueSave(current); redrawChips(); }
 }
-function subExtra(r, name) {
-  const v = (r.extras[name] || 0) - 1;
-  if (v <= 0) delete r.extras[name]; else r.extras[name] = v;
+function subOne(r, name) {
+  const v = (r.counts[name] || 0) - 1;
+  if (v <= 0) delete r.counts[name]; else r.counts[name] = v;
 }
 function undo(r) {
   const a = r.hist.pop();
   if (!a) return;
-  if (a.t === "key") r[a.k] = Math.max(0, (r[a.k] || 0) - 1);
-  else {
-    subExtra(r, a.k);
-    if (a.created) { r.custom = r.custom.filter(n => n !== a.k); queueSave(current); redrawChips(); }
+  if (a.t === "sp") { r.spoiled = Math.max(0, r.spoiled - 1); return; }
+  subOne(r, a.k);
+  if (a.created) { r.custom = r.custom.filter(n => n !== a.k); queueSave(current); redrawChips(); }
+}
+let resetTimer = null;
+function armReset(btn) {
+  clearTimeout(resetTimer);
+  if (btn.dataset.act === "reset") {
+    btn.dataset.act = "reset2";
+    btn.textContent = "Tap again to clear — this cannot be undone";
+    btn.classList.add("armed");
+    resetTimer = setTimeout(() => {
+      btn.dataset.act = "reset";
+      btn.textContent = "Clear this whole event";
+      btn.classList.remove("armed");
+    }, 5000);
   }
 }
 
@@ -502,17 +512,17 @@ function chipsHTML(e, r) {
   const base = extrasFor(e);
   const extra = r.custom.filter(n => n !== "Other" && !base.some(x => x.name === n))
                         .map(n => ({ name: n, fam: famLoose(n) }));
-  const one = (name, fam, act, cls) =>
-    `<div class="chip ${cls || "l-" + famClass(fam)}" data-act="${act}" data-b="${esc(name)}" role="button" tabindex="0">
+  const one = (name, fam) =>
+    `<div class="chip l-${famClass(fam)}" data-act="add" data-b="${esc(name)}" role="button" tabindex="0">
        <span class="cn">${esc(name)}</span>
        <span class="cbox"><span class="cv" data-cv="${esc(name)}">0</span>
-       <button type="button" class="cminus" data-act="x-" data-b="${esc(name)}"
+       <button type="button" class="cminus" data-act="sub" data-b="${esc(name)}"
                aria-label="One fewer ${esc(name)}">&minus;</button></span></div>`;
-  return base.concat(extra).map(x => one(x.name, x.fam, "x")).join("") +
+  return base.concat(extra).map(x => one(x.name, x.fam)).join("") +
     `<div class="chip l-add" data-act="other" role="button" tabindex="0">
        <span class="cn">Something else&hellip;</span>
        <span class="cbox"><span class="cv" data-cv="Other">0</span>
-       <button type="button" class="cminus" data-act="x-" data-b="Other"
+       <button type="button" class="cminus" data-act="sub" data-b="Other"
                aria-label="One fewer other">&minus;</button></span></div>`;
 }
 function redrawChips() {
@@ -524,12 +534,13 @@ function redrawChips() {
 function paint() {
   if (!current || !$("#grand")) return;
   const r = rec(current);
-  $("#n1").textContent = r.c1;
-  $("#n2").textContent = r.c2;
+  $("#grand").textContent = allTotal(r);
   $("#spv").textContent = r.spoiled;
-  $("#grand").textContent = r.c1 + r.c2 + extrasTotal(r);
+  $("#slabs").querySelectorAll(".slab").forEach(s => {
+    s.querySelector(".n").textContent = r.counts[s.dataset.b] || 0;
+  });
   $("#chips").querySelectorAll(".chip").forEach(c => {
-    const cv = c.querySelector(".cv"), key = cv.dataset.cv, v = r.extras[key] || 0;
+    const cv = c.querySelector(".cv"), key = cv.dataset.cv, v = r.counts[key] || 0;
     cv.textContent = v;
     c.classList.toggle("on", v > 0);
     c.querySelector(".cminus").hidden = v <= 0;
@@ -541,54 +552,38 @@ function paint() {
 function renderEvent(id) {
   current = id;
   const e = EVENTS.find(x => x.id === id), r = rec(id);
+  const tight = e.bottles.length > 2;       /* four featured bottles need shorter buttons */
+  const slabs = e.bottles.map(b =>
+    `<div class="slab s-${famClass(famOf(b))}" data-act="add" data-b="${esc(b)}" role="button" tabindex="0">
+       <span class="nm"><small>Tap to add</small>${esc(b)}</span>
+       <span class="nbox"><span class="n">0</span>
+       <button type="button" class="minus" data-act="sub" data-b="${esc(b)}"
+               aria-label="One fewer ${esc(b)}">&minus; 1</button></span>
+     </div>`).join("");
   $("#view").innerHTML = `
     <button type="button" class="back" data-act="home">&larr; All dates</button>
     <div class="evhead">
       <h2>${esc(e.venue)}</h2>
       <p>${fdate(e.date)} &middot; ${esc(e.time)} &middot; ${esc(e.city)}</p>
-
+      <p>${e.agency ? "Agency #" + esc(e.agency) + " &middot; " : ""}${e.contact ? esc(e.contact) + " &middot; " : ""}${esc(e.id)}</p>
     </div>
     <div class="totbar"><b>Bottles tonight</b><span id="grand">0</span></div>
-    <div class="slab s-${famClass(famOf(e.b1))}" data-act="c1" role="button" tabindex="0">
-      <span class="nm"><small>Tap to add</small>${esc(e.b1)}</span>
-      <span class="nbox"><span class="n" id="n1">0</span>
-      <button type="button" class="minus" data-act="c1-" aria-label="One fewer ${esc(e.b1)}">&minus; 1</button></span>
-    </div>
-    <div class="slab s-${famClass(famOf(e.b2))}" data-act="c2" role="button" tabindex="0">
-      <span class="nm"><small>Tap to add</small>${esc(e.b2)}</span>
-      <span class="nbox"><span class="n" id="n2">0</span>
-      <button type="button" class="minus" data-act="c2-" aria-label="One fewer ${esc(e.b2)}">&minus; 1</button></span>
-    </div>
+    <div id="slabs" class="${tight ? "tight" : ""}">${slabs}</div>
     <button type="button" class="undo" id="undo" data-act="undo" disabled>Nothing to undo yet</button>
-    <div class="sec">Also sold tonight &mdash; same brands</div>
+    <div class="sec">Also sold today &mdash; same brands</div>
     <div class="chips" id="chips">${chipsHTML(e, r)}</div>
     <div class="fld"><label>Spoiled / redone</label>
       <div class="stepper"><button type="button" data-act="sp-" aria-label="One fewer spoiled">&minus;</button>
         <span class="v" id="spv">0</span>
         <button type="button" data-act="sp+" aria-label="One more spoiled">+</button></div></div>
     <div class="fld"><label for="notes">Notes</label>
-      <textarea id="notes" placeholder="Anything worth remembering about tonight"></textarea></div>
+      <textarea id="notes" placeholder="Anything worth remembering about today"></textarea></div>
     <p class="note">Tap a bottle to add one. The small &minus; takes one back off.</p>
     <button type="button" class="reset" data-act="reset">Clear this whole event</button>`;
   $("#notes").value = r.notes;
   $("#notes").oninput = ev => { r.notes = ev.target.value; queueSave(id); };
   $("#foot").textContent = "";
   paint();
-}
-
-let resetTimer = null;
-function armReset(btn) {
-  clearTimeout(resetTimer);
-  if (btn.dataset.act === "reset") {
-    btn.dataset.act = "reset2";
-    btn.textContent = "Tap again to clear \u2014 this cannot be undone";
-    btn.classList.add("armed");
-    resetTimer = setTimeout(() => {
-      btn.dataset.act = "reset";
-      btn.textContent = "Clear this whole event";
-      btn.classList.remove("armed");
-    }, 5000);
-  }
 }
 
 /* ---------- plain-text copy-out (no cloud needed) ---------- */
@@ -599,8 +594,8 @@ function reportText() {
     if (!r || evTotal(e.id) === 0) return;
     (months[e.date.slice(0, 7)] = months[e.date.slice(0, 7)] || []).push([e, r]);
   });
-  L.push("PURPLE SHARK DESIGNS \u2014 BOTTLE TALLY");
-  L.push("Suntory holiday sampling \u2014 as of " + fdate(todayISO()));
+  L.push("PURPLE SHARK DESIGNS — BOTTLE TALLY");
+  L.push("Suntory holiday sampling — as of " + fdate(todayISO()));
   const keys = Object.keys(months).sort();
   if (!keys.length) { L.push(""); L.push("Nothing counted yet."); return L.join("\n"); }
   keys.forEach(k => {
@@ -609,13 +604,11 @@ function reportText() {
     const tot = rows.reduce((a, [e]) => a + evTotal(e.id), 0);
     const bybottle = {};
     rows.forEach(([e, r]) => {
-      bybottle[e.b1] = (bybottle[e.b1] || 0) + r.c1;
-      bybottle[e.b2] = (bybottle[e.b2] || 0) + r.c2;
-      Object.keys(r.extras).forEach(n => { bybottle[n] = (bybottle[n] || 0) + r.extras[n]; });
+      Object.keys(r.counts).forEach(n => { bybottle[n] = (bybottle[n] || 0) + r.counts[n]; });
     });
     L.push("");
     L.push("=== " + new Date(y, m - 1, 1).toLocaleDateString("en-US",
-      { month: "long", year: "numeric" }).toUpperCase() + " \u2014 " + tot + " bottles, " +
+      { month: "long", year: "numeric" }).toUpperCase() + " — " + tot + " bottles, " +
       rows.length + " event" + (rows.length > 1 ? "s" : "") + " ===");
     L.push("");
     L.push("By bottle:");
@@ -625,11 +618,9 @@ function reportText() {
     L.push("");
     L.push("By event:");
     rows.forEach(([e, r]) => {
-      L.push("  " + fdate(e.date) + " \u2014 " + e.venue + ", " + e.city +
-             " (" + e.id + ") \u2014 " + evTotal(e.id));
-      if (r.c1) L.push("      " + r.c1 + "  " + e.b1);
-      if (r.c2) L.push("      " + r.c2 + "  " + e.b2);
-      Object.keys(r.extras).forEach(n => { if (r.extras[n]) L.push("      " + r.extras[n] + "  " + n); });
+      L.push("  " + fdate(e.date) + " — " + e.venue + ", " + e.city +
+             " (" + e.id + ") — " + evTotal(e.id));
+      Object.keys(r.counts).forEach(n => { if (r.counts[n]) L.push("      " + r.counts[n] + "  " + n); });
       if (r.spoiled) L.push("      (" + r.spoiled + " spoiled/redone)");
       if (r.notes) L.push("      note: " + r.notes);
     });
@@ -654,7 +645,7 @@ function renderExport() {
 }
 function doCopy(btn) {
   const t = $("#exp");
-  const done = ok => { btn.textContent = ok ? "Copied \u2713" : "Select it by hand \u2014 copy didn't work";
+  const done = ok => { btn.textContent = ok ? "Copied ✓" : "Select it by hand — copy didn't work";
                        setTimeout(() => { btn.textContent = "Copy all of it"; }, 2500); };
   try {
     if (navigator.clipboard && navigator.clipboard.writeText) {
@@ -666,14 +657,14 @@ function doCopy(btn) {
   catch (e) { done(false); }
 }
 
-/* ---------- bottle list editor (for the kitchen table, not the store) ---------- */
+/* ---------- bottle list editor ---------- */
 function renderLists() {
   current = null;
   const f = lists();
   $("#view").innerHTML = `
     <button type="button" class="back" data-act="home">&larr; All dates</button>
     <div class="evhead"><h2>Bottle lists</h2>
-      <p>These are the buttons under "Also sold tonight". One bottle per line.</p></div>
+      <p>These are the buttons under "Also sold today". One bottle per line.</p></div>
     ${Object.keys(f).map(k => `<div class="fld" style="margin-bottom:10px">
       <label for="f-${esc(k)}">${esc(k)}</label>
       <textarea id="f-${esc(k)}" rows="7" style="min-height:120px">${esc(f[k].join("\n"))}</textarea>
@@ -834,7 +825,21 @@ async function dbxInit() {
     }
     throw new Error("Dropbox kept changing underneath us");
   }
+  /* any other JSON file in the app folder; null when it isn't there */
+  async function file(path) {
+    const r = await fetch("https://content.dropboxapi.com/2/files/download", {
+      method: "POST",
+      headers: { "Authorization": "Bearer " + await dbxToken(), "Dropbox-API-Arg": ascii({ path }) }
+    });
+    if (!r.ok) {
+      const body = await r.text();
+      if (r.status === 409 && body.indexOf("not_found") >= 0) return null;
+      throw new Error("Dropbox download " + r.status);
+    }
+    return JSON.parse(await r.text());
+  }
   return {
+    file,
     doc(path) {
       const [col, id] = path.split("/");
       return {
@@ -848,12 +853,31 @@ async function dbxInit() {
   };
 }
 
+/* Store contacts and agency numbers are not in this public file. They sit in the private
+   Dropbox app folder (bottle-tally-private.json) and are cached on the phone once read. */
+const PRIV_LS = "psd-tally-private";
+function applyPrivate(p) {
+  if (!p || !p.events) return;
+  EVENTS.forEach(e => { const x = p.events[e.id]; if (x) { e.agency = x.agency; e.contact = x.contact; } });
+}
+try { applyPrivate(JSON.parse(localStorage.getItem(PRIV_LS) || "null")); } catch (e) {}
+
 (async () => {
   try { db = window.claude && window.claude.use ? await window.claude.use("db") : null; }
   catch (e) { db = null; }
   if (!db) { try { db = await dbxInit(); } catch (e) { db = null; } }
   if (!db) return;
   setChip("live");
+  if (db.file) (async () => {
+    try {
+      const p = await db.file("/bottle-tally-private.json");
+      if (p) {
+        applyPrivate(p);
+        try { localStorage.setItem(PRIV_LS, JSON.stringify(p)); } catch (e) {}
+        if (current) renderEvent(current);
+      }
+    } catch (e) {}
+  })();
   try {
     const cfg = await db.doc("config/bottles").get();
     const cv = cfg && (typeof cfg.data === "function" ? cfg.data() : cfg.data || cfg);
@@ -867,24 +891,16 @@ async function dbxInit() {
       const v = d && d.data ? (typeof d.data === "function" ? d.data() : d.data) : d;
       if (!v || !v.invoice) return;
       const local = store[v.invoice];
-      const remote = { c1: v.c1 || 0, c2: v.c2 || 0, extras: v.extras || {},
-                       custom: Array.isArray(v.custom) ? v.custom : [], hist: [],
-                       spoiled: v.spoiled || 0, notes: v.notes || "",
+      const remote = { counts: v.counts || {}, custom: Array.isArray(v.custom) ? v.custom : [],
+                       hist: [], spoiled: v.spoiled || 0, notes: v.notes || "",
                        updatedAt: v.updatedAt || "" };
       seen.add(v.invoice);
-      /* Whichever copy was touched last wins. Clearing a count on purpose must
-         stick — an older cloud copy with bigger numbers can't resurrect it. */
       const lstamp = (local && local.updatedAt) || "";
       if (!local || (remote.updatedAt || "") >= lstamp) {
         if (local && Array.isArray(local.hist)) remote.hist = local.hist;
         store[v.invoice] = remote;
-      } else {
-        pending.add(v.invoice);   /* phone is ahead of the cloud — push it up */
-      }
+      } else pending.add(v.invoice);
     });
-    /* A night counted with no signal lives only on the phone. Send it now. */
-    /* Only push a night this phone actually counted (it carries a timestamp).
-       An old untimestamped copy must never resurrect a record cleared elsewhere. */
     EVENTS.forEach(e => {
       const r = store[e.id];
       if (!seen.has(e.id) && r && r.updatedAt && evTotal(e.id) > 0) pending.add(e.id);
@@ -896,7 +912,6 @@ async function dbxInit() {
 })();
 
 (async () => { try { if (navigator.storage && navigator.storage.persist) await navigator.storage.persist(); } catch (e) {} })();
-
 (async () => { try { if (navigator.wakeLock) await navigator.wakeLock.request("screen"); } catch (e) {} })();
 
 </script>
