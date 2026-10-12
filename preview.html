@@ -129,7 +129,9 @@ function todayISO(){
 }
 function render(){
   const s = D.signs[i];
-  const offerHTML = '<div class="offer">'+COPY.offer+'</div>';
+  // one featured pour reads "the bourbon", several read "the bourbons"
+  const offer = s.pours.length === 1 ? COPY.offer.replace("bourbons", "bourbon") : COPY.offer;
+  const offerHTML = '<div class="offer">'+offer+'</div>';
   $("#stage").innerHTML = `
     <div class="photo"><img src="data:image/jpeg;base64,${D.img[s.key]}" alt=""></div>
     <div class="panel" style="--accent:var(--${s.accent})">
