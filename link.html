@@ -1,0 +1,87 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="color-scheme" content="light dark">
+<meta name="robots" content="noindex,nofollow">
+<title>Link the Counter</title>
+<link rel="icon" type="image/png" sizes="512x512" href="icon.png">
+<link rel="apple-touch-icon" href="icon.png">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow:wght@400;500;600&family=Barlow+Condensed:wght@500;600;700&display=swap">
+<style>
+:root{--bg:#EDEBE6;--surface:#FFFFFF;--fg:#211E1B;--dim:#6A635A;--line:#D6D2C9;--brand:#5B3A8E;--good:#2C7A4B;--bad:#8A1F1F}
+@media (prefers-color-scheme:dark){:root{--bg:#17140F;--surface:#221E18;--fg:#F2EDE4;--dim:#A49B8D;--line:#38312A;--brand:#A98BD6;--good:#4FA872;--bad:#D46A6A}}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--fg);font:16px/1.45 Barlow,system-ui,sans-serif}
+.wrap{max-width:620px;margin:0 auto;padding:20px 16px 48px}
+.top{border-bottom:3px solid var(--brand);padding-bottom:12px}
+h1{font:700 34px/1 "Barlow Condensed",sans-serif;margin:0}
+.sub{margin:4px 0 0;color:var(--dim)}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:16px;margin:18px 0}
+ol{margin:8px 0 0;padding-left:22px}
+li{margin:6px 0}
+textarea{width:100%;min-height:96px;font:13px/1.4 ui-monospace,Menlo,Consolas,monospace;background:var(--bg);
+  color:var(--fg);border:1px solid var(--line);border-radius:10px;padding:10px;resize:none;word-break:break-all}
+button{width:100%;font:600 18px Barlow,sans-serif;color:#fff;background:var(--brand);border:0;border-radius:12px;padding:14px;margin-top:10px;cursor:pointer}
+.warn{color:var(--dim);font-size:14px;margin:10px 0 0}
+.bad{color:var(--bad);font-weight:600}
+a{color:var(--brand)}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="top">
+    <h1>Link the Counter</h1>
+    <p class="sub">Lets your bottle counter sync with Bottle Tally</p>
+  </div>
+  <div id="view"></div>
+</div>
+<script>
+/* Shows the Dropbox sign-in this phone already uses for Bottle Tally, so it can be
+   pasted into the counter's Sync setup page. Nothing is sent anywhere from here. */
+let code = "";
+for (const k of ["psd-tally-dbx", "psi_auth_v1"]) {
+  try { const a = JSON.parse(localStorage.getItem(k) || "null"); if (a && a.refresh) { code = a.refresh; break; } } catch (e) {}
+}
+const view = document.getElementById("view");
+if (!code) {
+  view.innerHTML = `<div class="card"><p class="bad">This phone isn't connected to Dropbox yet.</p>
+    <p>Open the <a href="./">tally page</a> on this phone, tap <b>Connect Dropbox</b>, then come back here.</p></div>`;
+} else {
+  view.innerHTML = `
+    <div class="card">
+      <b>Your link code</b>
+      <textarea id="code" readonly></textarea>
+      <button type="button" id="copy">Copy link code</button>
+      <p class="warn">Keep this private. It opens the Bottle Tally folder in your Dropbox,
+        like a key. It only lives on your phone and your counter.</p>
+    </div>
+    <div class="card">
+      <b>Then, on the counter</b>
+      <ol>
+        <li>On the event list, tap <b>PHONE</b>.</li>
+        <li>On this phone, join the Wi-Fi it shows (<b>PurpleShark-Counter</b>).</li>
+        <li>Open <b>192.168.4.1</b> and tap <b>Sync setup</b>.</li>
+        <li>Paste the code, type your home Wi-Fi name and password, and tap <b>Save</b>.</li>
+        <li>Tap <b>Done</b> on the counter, then <b>SYNC</b>.</li>
+      </ol>
+    </div>`;
+  const t = document.getElementById("code"), b = document.getElementById("copy");
+  t.value = code;
+  const done = ok => { b.textContent = ok ? "Copied ✓" : "Select the code by hand and copy";
+                       setTimeout(() => { b.textContent = "Copy link code"; }, 2500); };
+  b.onclick = () => {
+    try {
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(code).then(() => done(true), () => { t.select(); done(false); });
+        return;
+      }
+    } catch (e) {}
+    try { t.select(); t.setSelectionRange(0, 99999); done(!!document.execCommand("copy")); }
+    catch (e) { done(false); }
+  };
+}
+</script>
+</body>
+</html>
